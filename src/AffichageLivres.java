@@ -13,14 +13,11 @@ public class AffichageLivres extends JFrame {
         super("Livres disponibles");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Initialisation de la connexion à la base de données
         connexion = new Connexion();
         connexion.nouvelleConnexion();
 
-        // Création du panneau principal
         JPanel mainPanel = new JPanel(new GridLayout(0, 1));
 
-        // Ajout du titre "Livres disponibles"
         JLabel title = new JLabel("Livres disponibles");
         title.setFont(new Font("Arial", Font.BOLD, 24)); // Police en gras, taille 24
         title.setHorizontalAlignment(SwingConstants.CENTER); // Centrer le texte
@@ -34,7 +31,7 @@ public class AffichageLivres extends JFrame {
         try {
             ResultSet rs = connexion.query(sql);
 
-            // Parcours des résultats et affichage des informations des livres
+            // Affichage des informations des livres
             while (rs.next()) {
                 JPanel livrePanel = new JPanel(new BorderLayout());
                 livrePanel.setBorder(BorderFactory.createEtchedBorder());
@@ -55,10 +52,10 @@ public class AffichageLivres extends JFrame {
                 infoPanel.add(new JLabel("Description: " + rs.getString("DESCRIPTION")));
                 infoPanel.add(new JLabel("Nombre de pages: " + rs.getInt("NB_PAGES")));
 
-                // Ajout du bouton "Détails" après le label de l'auteur
+                // Bouton Détails
                 infoPanel.add(authorLabel);
 
-                // Bouton "Détails" pour afficher les détails de l'auteur
+                // Pour afficher les détails de l'auteur
                 JButton detailsButton = new JButton("Détails de l'auteur");
                 detailsButton.addActionListener(new DetailsButtonListener(rs.getInt("AUTHOR_ID"))); // Ajoute un gestionnaire d'événements
 
@@ -80,9 +77,9 @@ public class AffichageLivres extends JFrame {
         getContentPane().add(new JScrollPane(mainPanel));
 
         // Taille de la fenêtre
-        setSize(400, 500); // Taille (largeur/hauteur)
+        setSize(400, 500);
 
-        setLocationRelativeTo(null); // Pour centrer la fenêtre
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
