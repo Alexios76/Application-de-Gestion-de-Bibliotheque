@@ -13,14 +13,11 @@ public class AuteurDetailsWindow extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.authorId = authorId;
 
-        // Initialisation de la connexion à la base de données
         connexion = new Connexion();
         connexion.nouvelleConnexion();
 
-        // Création du panneau principal
         JPanel mainPanel = new JPanel(new GridLayout(0, 1));
 
-        // Ajout du titre "Fiche de l'auteur"
         JLabel titleLabel = new JLabel("Fiche de l'auteur");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Police en gras, taille 20
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER); // Centrer le texte
@@ -31,7 +28,7 @@ public class AuteurDetailsWindow extends JFrame {
         try {
             ResultSet rs = connexion.query(sql);
 
-            // Parcours des résultats et affichage des informations de l'auteur
+            // Affichage des informations de l'auteur
             while (rs.next()) {
                 JPanel auteurPanel = new JPanel(new BorderLayout());
                 auteurPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -64,13 +61,13 @@ public class AuteurDetailsWindow extends JFrame {
         getContentPane().add(new JScrollPane(mainPanel));
 
         // Taille de la fenêtre
-        setSize(400, 500); // Taille (largeur/hauteur)
+        setSize(400, 500);
 
-        setLocationRelativeTo(null); // Pour centrer la fenêtre
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AuteurDetailsWindow(1)); // Pour tester
+        SwingUtilities.invokeLater(() -> new AuteurDetailsWindow(1));
     }
 }
