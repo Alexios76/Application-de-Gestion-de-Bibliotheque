@@ -86,6 +86,12 @@ public class AdminNouvLivre extends JFrame {
                     // Affichage d'un message si ça a marché
                     JOptionPane.showMessageDialog(null, "Nouveau livre ajouté avec succès !");
 
+                    // Fermer la fenêtre actuelle de AdminNouvLivre
+                    dispose();
+                    // Créer une nouvelle instance de AdminGestionLivres pour revenir à cette page
+                    new AdminGestionLivres();
+                    
+
                     // Remise à zéro des champs de saisie
                     titleField.setText("");
                     genreField.setText("");
