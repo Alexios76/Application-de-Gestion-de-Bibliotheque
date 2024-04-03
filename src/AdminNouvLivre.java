@@ -45,7 +45,6 @@ public class AdminNouvLivre extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 if (authorIds.isEmpty() || authorIds.get(authorComboBox.getSelectedIndex()) == null) {
                     JOptionPane.showMessageDialog(null, "Veuillez sélectionner un auteur");
                     return;
@@ -53,13 +52,23 @@ public class AdminNouvLivre extends JFrame {
 
                 String title = titleField.getText();
                 String genre = genreField.getText();
-                int releaseDate = Integer.parseInt(releaseDateField.getText().replaceAll("\\D", ""));
+                int releaseDate;
+                try {
+                    releaseDate = Integer.parseInt(releaseDateField.getText());
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Veuillez saisir une année valide pour la date de parution");
+                    return;
+                }
                 String description = descriptionArea.getText();
-                int nbPages = Integer.parseInt(nbPagesField.getText());
-
+                int nbPages;
+                try {
+                    nbPages = Integer.parseInt(nbPagesField.getText());
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Veuillez saisir un nombre de pages valide");
+                    return;
+                }
 
                 int authorId = authorIds.get(authorComboBox.getSelectedIndex());
-
 
                 // Requête SQL
                 String sql = "INSERT INTO books (TITLE, AUTHOR_ID, GENRE, RELEASE_DATE, DESCRIPTION, NB_PAGES) VALUES (?, ?, ?, ?, ?, ?)";
@@ -91,6 +100,7 @@ public class AdminNouvLivre extends JFrame {
                 }
             }
         });
+
 
         mainPanel.add(createLabelAndTextField("Titre:", titleField));
         mainPanel.add(createLabelAndTextField("Genre:", genreField));
