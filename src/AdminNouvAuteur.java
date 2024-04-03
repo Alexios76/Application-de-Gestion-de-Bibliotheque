@@ -61,6 +61,11 @@ public class AdminNouvAuteur extends JFrame {
                     // Affichage d'un message si ça a marché
                     JOptionPane.showMessageDialog(null, "Nouvel auteur ajouté avec succès !");
 
+                    // Fermer la fenêtre actuelle de AdminNouvAuteur
+                    dispose();
+                    // Créer une nouvelle instance de AdminGestionAuteurs pour revenir à cette page
+                    new AdminGestionAuteurs();
+
                     // Remise à zéro des champs de saisie
                     surnameField.setText("");
                     nameField.setText("");
