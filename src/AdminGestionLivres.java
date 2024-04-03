@@ -74,7 +74,7 @@ public class AdminGestionLivres extends JFrame {
 
     // Charger la liste des livres dans le panneau
     private void loadBooks(JPanel booksPanel) {
-        String sql = "SELECT b.ID, b.TITLE, CONCAT(a.NAME, ' ', a.SURNAME) AS AUTHOR_NAME, b.GENRE, b.RELEASE_DATE, b.DESCRIPTION, b.NB_PAGES " +
+        String sql = "SELECT b.ID, b.TITLE, CONCAT(a.NAME, ' ', a.SURNAME) AS AUTHOR_NAME, b.GENRE, b.RELEASE_DATE, b.DESCRIPTION, b.NB_PAGES, b.availability " +
                 "FROM books b " +
                 "INNER JOIN authors a ON b.AUTHOR_ID = a.ID";
         try {
@@ -93,6 +93,7 @@ public class AdminGestionLivres extends JFrame {
                 JLabel releaseDateLabel = new JLabel("Date de sortie: " + rs.getInt("RELEASE_DATE"));
                 JLabel descriptionLabel = new JLabel("Description: " + rs.getString("DESCRIPTION"));
                 JLabel nbPagesLabel = new JLabel("Nombre de pages: " + rs.getInt("NB_PAGES"));
+                JLabel availabilityLabel = new JLabel("Disponibilité: " + (rs.getInt("availability") == 1 ? "Disponible" : "Non disponible"));
 
                 infoPanel.add(titleLabel);
                 infoPanel.add(authorLabel);
@@ -100,6 +101,7 @@ public class AdminGestionLivres extends JFrame {
                 infoPanel.add(releaseDateLabel);
                 infoPanel.add(descriptionLabel);
                 infoPanel.add(nbPagesLabel);
+                infoPanel.add(availabilityLabel); // Ajout de l'étiquette de disponibilité
 
                 // Boutons
                 JButton deleteButton = new JButton("Supprimer");
