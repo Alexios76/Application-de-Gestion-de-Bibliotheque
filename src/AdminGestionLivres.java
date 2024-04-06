@@ -106,6 +106,7 @@ public class AdminGestionLivres extends JFrame {
                 // Boutons
                 JButton deleteButton = new JButton("Supprimer");
                 JButton editButton = new JButton("Modifier");
+                JButton borrowButton = new JButton(rs.getInt("availability") == 1 ? "Emprunter ce livre" : "Retourner ce livre");
 
 
                 // Panneau pour les boutons
@@ -142,10 +143,20 @@ public class AdminGestionLivres extends JFrame {
                 });
 
 
+                // Bouton Emprunter/Retourner
+                borrowButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        handleBorrowAction(bookID, booksPanel);
+                    }
+                });
+
+
 
                 // Ajout des boutons au panneau des boutons
                 buttonPanel.add(deleteButton);
                 buttonPanel.add(editButton);
+                buttonPanel.add(borrowButton);
 
                 // Ajout du panneau des boutons au panneau d'informations du livre
                 infoPanel.add(buttonPanel);
@@ -173,6 +184,47 @@ public class AdminGestionLivres extends JFrame {
             JOptionPane.showMessageDialog(null, "Erreur lors de la suppression du livre !");
         }
     }
+
+
+    // Mettre à jour la disponibilité d'un livre
+    private void updateBookAvailability(int bookID, int newAvailability) throws SQLException {
+        String sql = "UPDATE books SET availability = ? WHERE ID = ?";
+        try (PreparedStatement preparedStatement = connexion.nouvelleConnexion().prepareStatement(sql)) {
+            preparedStatement.setInt(1, newAvailability);
+            preparedStatement.setInt(2, bookID);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // Déclarer une nouvelle méthode pour gérer l'action et l'exception SQLException
+    private void handleBorrowAction(int bookID, JPanel booksPanel) {
+        try {
+            String sql = "SELECT availability FROM books WHERE ID =?";
+            PreparedStatement preparedStatement = connexion.nouvelleConnexion().prepareStatement(sql);
+            preparedStatement.setInt(1, bookID);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                int confirmation = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment " + (rs.getInt("availability") == 1? "emprunter" : "retourner") + " ce livre?");
+                if (confirmation == JOptionPane.YES_OPTION) {
+                    int newAvailability = rs.getInt("availability") == 1? 0 : 1; // Inverser la disponibilité
+                    updateBookAvailability(bookID, newAvailability); // Mettre à jour la disponibilité du livre
+                    // Rafraîchir la fenêtre
+                    booksPanel.removeAll();
+                    loadBooks(booksPanel);
+                    mainPanel.revalidate();
+                    mainPanel.repaint();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Book not found!");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erreur lors de la mise à jour de la disponibilité du livre!");
+        }
+    }
+
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AdminGestionLivres::new);
