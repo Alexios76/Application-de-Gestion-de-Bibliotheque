@@ -107,6 +107,10 @@ public class AdminGestionLivres extends JFrame {
                 JButton deleteButton = new JButton("Supprimer");
                 JButton editButton = new JButton("Modifier");
 
+
+                // Panneau pour les boutons
+                JPanel buttonPanel = new JPanel(new FlowLayout());
+
                 // Récupération de l'ID du livre
                 int bookID = rs.getInt("ID");
 
@@ -138,8 +142,14 @@ public class AdminGestionLivres extends JFrame {
                 });
 
 
-                infoPanel.add(deleteButton);
-                infoPanel.add(editButton);
+
+                // Ajout des boutons au panneau des boutons
+                buttonPanel.add(deleteButton);
+                buttonPanel.add(editButton);
+
+                // Ajout du panneau des boutons au panneau d'informations du livre
+                infoPanel.add(buttonPanel);
+
 
                 livrePanel.add(infoPanel, BorderLayout.CENTER);
 
