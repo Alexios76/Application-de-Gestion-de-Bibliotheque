@@ -152,9 +152,6 @@ public class AdminGestionLivres extends JFrame {
                 });
 
 
-
-
-
                 // Ajout des boutons au panneau des boutons
                 buttonPanel.add(deleteButton);
                 buttonPanel.add(editButton);
@@ -162,7 +159,6 @@ public class AdminGestionLivres extends JFrame {
 
                 // Ajout du panneau des boutons au panneau d'informations du livre
                 infoPanel.add(buttonPanel);
-
 
                 livrePanel.add(infoPanel, BorderLayout.CENTER);
 
