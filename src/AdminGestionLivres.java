@@ -147,9 +147,11 @@ public class AdminGestionLivres extends JFrame {
                 borrowButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        handleBorrowAction(bookID, booksPanel);
+                        handleBorrowAction(bookID, booksPanel, mainPanel);
                     }
                 });
+
+
 
 
 
@@ -197,32 +199,45 @@ public class AdminGestionLivres extends JFrame {
     }
 
     // Déclarer une nouvelle méthode pour gérer l'action et l'exception SQLException
-    private void handleBorrowAction(int bookID, JPanel booksPanel) {
+    private void handleBorrowAction(int bookID, JPanel booksPanel, JPanel mainPanel) {
         try {
-            String sql = "SELECT availability FROM books WHERE ID =?";
+            String sql = "SELECT availability, TITLE FROM books WHERE ID =?";
             PreparedStatement preparedStatement = connexion.nouvelleConnexion().prepareStatement(sql);
             preparedStatement.setInt(1, bookID);
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
-                int confirmation = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment " + (rs.getInt("availability") == 1? "emprunter" : "retourner") + " ce livre?");
-                if (confirmation == JOptionPane.YES_OPTION) {
-                    int newAvailability = rs.getInt("availability") == 1? 0 : 1; // Inverser la disponibilité
-                    updateBookAvailability(bookID, newAvailability); // Mettre à jour la disponibilité du livre
-                    // Rafraîchir la fenêtre
-                    booksPanel.removeAll();
-                    loadBooks(booksPanel);
-                    mainPanel.revalidate();
-                    mainPanel.repaint();
+                int availability = rs.getInt("availability");
+                String bookTitle = rs.getString("TITLE");
+                if (availability == 1) {
+                    // Afficher la fenêtre d'emprunt
+                    // Afficher la fenêtre d'emprunt
+                    new EmpruntLivre(bookID, bookTitle, connexion);
+
+
+
+                } else {
+                    int confirmation = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment retourner ce livre ?");
+                    if (confirmation == JOptionPane.YES_OPTION) {
+                        int newAvailability = 1; // Mettre à jour la disponibilité du livre à disponible (1)
+                        updateBookAvailability(bookID, newAvailability); // Mettre à jour la disponibilité du livre
+                        // Rafraîchir la fenêtre
+                        booksPanel.removeAll();
+                        loadBooks(booksPanel);
+                        mainPanel.revalidate();
+                        mainPanel.repaint();
+                    }
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Book not found!");
+                JOptionPane.showMessageDialog(null, "Livre non trouvé !");
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Erreur lors de la mise à jour de la disponibilité du livre!");
+            JOptionPane.showMessageDialog(null, "Erreur lors de la mise à jour de la disponibilité du livre !");
         }
     }
+
+
 
 
 
