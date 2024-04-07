@@ -10,6 +10,8 @@ public class AffichageLivres extends JFrame {
 
     private Connexion connexion;
     private List<JPanel> livrePanels;
+    private JCheckBox disponibleCheckBox; // Case à cocher
+    private JPanel livresPanel;
 
     public AffichageLivres() {
         super("Livres disponibles");
@@ -20,7 +22,7 @@ public class AffichageLivres extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Panneau pour le titre et le champ de recherche
+        // Panneau pour le titre, le champ de recherche et la case à cocher Disponible
         JPanel titleSearchPanel = new JPanel(new BorderLayout());
 
         JLabel titleLabel = new JLabel("Livres disponibles");
@@ -37,18 +39,46 @@ public class AffichageLivres extends JFrame {
         searchPanel.add(searchField);
         titleSearchPanel.add(searchPanel, BorderLayout.CENTER);
 
+        // Case à cocher Disponible
+        disponibleCheckBox = new JCheckBox("Disponible");
+        disponibleCheckBox.setSelected(false); // Par défaut, non cochée
+        disponibleCheckBox.addItemListener(new DisponibleCheckBoxListener());
+        titleSearchPanel.add(disponibleCheckBox, BorderLayout.SOUTH);
+
         mainPanel.add(titleSearchPanel, BorderLayout.NORTH);
 
-        JPanel livresPanel = new JPanel();
+        livresPanel = new JPanel();
         livresPanel.setLayout(new BoxLayout(livresPanel, BoxLayout.Y_AXIS));
 
         livrePanels = new ArrayList<>();
 
+        // Affichage initial des livres disponibles
+        afficherLivresDisponibles();
+
+        mainPanel.add(new JScrollPane(livresPanel), BorderLayout.CENTER);
+
+        // Ajout du panneau principal à la fenêtre
+        getContentPane().add(mainPanel);
+
+        // Taille de la fenêtre
+        setSize(400, 500);
+
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    // Méthode pour afficher les livres disponibles
+    private void afficherLivresDisponibles() {
         // Requête SQL pour récupérer les livres disponibles avec les informations sur les auteurs
         String sql = "SELECT b.TITLE, CONCAT(a.SURNAME, ' ', a.NAME) AS AUTHOR_NAME, a.SURNAME, a.NAME, b.GENRE, b.RELEASE_DATE, b.DESCRIPTION, b.NB_PAGES, a.ID AS AUTHOR_ID " +
                 "FROM books b " +
-                "INNER JOIN authors a ON b.AUTHOR_ID = a.ID " +
-                "WHERE b.AVAILABILITY = 1";
+                "INNER JOIN authors a ON b.AUTHOR_ID = a.ID ";
+
+        if (disponibleCheckBox.isSelected()) {
+            // Afficher uniquement les livres disponibles
+            sql += "WHERE b.AVAILABILITY = 1";
+        }
+
         try {
             ResultSet rs = connexion.query(sql);
 
@@ -62,17 +92,6 @@ public class AffichageLivres extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        mainPanel.add(new JScrollPane(livresPanel), BorderLayout.CENTER);
-
-        // Ajout du panneau principal à la fenêtre
-        getContentPane().add(mainPanel);
-
-        // Taille de la fenêtre
-        setSize(400, 500);
-
-        setLocationRelativeTo(null);
-        setVisible(true);
     }
 
     private JPanel createLivrePanel(ResultSet rs) throws SQLException {
@@ -126,7 +145,7 @@ public class AffichageLivres extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            // Ouvrir la fenêtre de détails de l'auteur avec l'ID de l'auteur
+            // Ouvre la fenêtre de détails de l'auteur
             new AuteurDetailsWindow(authorId);
         }
     }
@@ -149,6 +168,20 @@ public class AffichageLivres extends JFrame {
                     panel.setVisible(false);
                 }
             }
+        }
+    }
+
+    // Gestionnaire d'événements pour la case à cocher "Disponible"
+    class DisponibleCheckBoxListener implements ItemListener {
+        public void itemStateChanged(ItemEvent e) {
+            // Efface les livres actuellement affichés
+            livrePanels.clear();
+            livresPanel.removeAll();
+            getContentPane().validate();
+            getContentPane().repaint();
+
+            // Affiche les livres disponibles
+            afficherLivresDisponibles();
         }
     }
 
