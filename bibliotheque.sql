@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mer. 27 mars 2024 à 09:02
+-- Généré le : dim. 07 avr. 2024 à 11:17
 -- Version du serveur : 8.2.0
 -- Version de PHP : 8.2.13
 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `authors` (
   `BIRTH_DATE` int NOT NULL,
   `DEATH_DATE` int NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `authors`
@@ -48,7 +48,9 @@ INSERT INTO `authors` (`ID`, `SURNAME`, `NAME`, `STYLE`, `BIOGRAPHY`, `BIRTH_DAT
 (2, 'Charles', 'Baudelaire', 'classicisme', 'Poète né à Paris.', 1821, 1867),
 (3, 'Antoine', 'de Saint-Exupéry', 'écrivain de conte', 'Disparu en vol pendant la seconde Guerre Mondiale.', 1900, 1944),
 (4, 'Victor', 'Hugo', 'romancier dramaturge', 'Ecrivain et homme politique.', 1802, 1885),
-(5, 'Alexandre', 'Dumas', 'romancier d\'aventure', 'Ecrivain du mouvement du romantisme.', 1824, 1895);
+(5, 'Alexandre', 'Dumas', 'romancier d\'aventure', 'Ecrivain du mouvement du romantisme.', 1824, 1895),
+(6, 'TestPrenom', 'TestNom', 'TestStyle', 'TestBiographie', 2015, 2016),
+(7, 'Auteur prénom 2', 'Auteur nom 2', 'classicisme', 'biographie de l\'auteur 2.....', 1800, 1880);
 
 -- --------------------------------------------------------
 
@@ -65,22 +67,25 @@ CREATE TABLE IF NOT EXISTS `books` (
   `RELEASE_DATE` int NOT NULL,
   `DESCRIPTION` varchar(300) NOT NULL,
   `NB_PAGES` int NOT NULL,
-  `IMAGE` varchar(50) NOT NULL,
-  `AVAILABILITY` tinyint(1) NOT NULL DEFAULT '1',
+  `IMAGE` varchar(255) DEFAULT NULL,
+  `availability` int DEFAULT '1',
   PRIMARY KEY (`ID`),
   KEY `AUTHOR_ID` (`AUTHOR_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `books`
 --
 
-INSERT INTO `books` (`ID`, `TITLE`, `AUTHOR_ID`, `GENRE`, `RELEASE_DATE`, `DESCRIPTION`, `NB_PAGES`, `IMAGE`, `AVAILABILITY`) VALUES
+INSERT INTO `books` (`ID`, `TITLE`, `AUTHOR_ID`, `GENRE`, `RELEASE_DATE`, `DESCRIPTION`, `NB_PAGES`, `IMAGE`, `availability`) VALUES
 (1, 'L\'étranger', 1, 'roman', 1942, 'Auteur : Albert Camus', 214, '', 1),
 (2, 'Les fleurs du mal', 2, 'poésie', 1857, 'Auteur : Charles Beaudelaire', 345, '', 1),
 (3, 'Le petit prince', 3, 'conte', 1943, 'Auteur : Antoine de Saint Exupéry', 84, '', 1),
-(4, 'Les Misérables', 4, 'roman', 1862, 'Auteur : Victor Hugo', 1201, '', 1),
-(5, 'Le comte de Monte Cristo', 5, 'roman', 1844, 'Auteur : Alexandre Dumas', 1598, '', 1);
+(4, 'Les Misérables', 4, 'roman', 1862, 'Auteur : Victor Hugo', 1201, '', 0),
+(5, 'Le comte de Monte Cristo', 5, 'roman', 1844, 'Auteur : Alexandre Dumas', 1598, '', 1),
+(6, 'NouvTest', 2, 'NouvGenre', 2024, 'desciprtion du nouveau test', 692, NULL, 1),
+(8, 'Livre 3', 5, 'Genre 3', 2000, 'Livre numéro 3', 300, NULL, 1),
+(9, 'Livre 4', 5, 'Genre 4', 2017, 'description du livre 4', 259, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -95,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `borrow` (
   `LEASING_DATE` date NOT NULL,
   `RETURN_DATE` date NOT NULL,
   `GRADE` int DEFAULT NULL,
-  `COMMENT` varchar(300) NOT NULL,
+  `COMMENT` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`USER_ID`,`BOOK_ID`),
   KEY `USER_ID` (`USER_ID`),
   KEY `BOOK_ID` (`BOOK_ID`)
@@ -107,7 +112,9 @@ CREATE TABLE IF NOT EXISTS `borrow` (
 
 INSERT INTO `borrow` (`USER_ID`, `BOOK_ID`, `LEASING_DATE`, `RETURN_DATE`, `GRADE`, `COMMENT`) VALUES
 (3, 2, '2024-02-15', '0000-00-00', NULL, ''),
-(4, 1, '2024-02-01', '2024-02-15', 1, '');
+(4, 1, '2024-02-01', '2024-02-15', 1, ''),
+(4, 8, '2024-04-12', '2024-04-15', NULL, NULL),
+(5, 4, '2024-04-10', '2024-05-10', NULL, NULL);
 
 -- --------------------------------------------------------
 
