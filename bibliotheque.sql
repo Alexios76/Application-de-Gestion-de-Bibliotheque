@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : dim. 07 avr. 2024 à 11:17
+-- Généré le : dim. 07 avr. 2024 à 15:17
 -- Version du serveur : 8.2.0
 -- Version de PHP : 8.2.13
 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `authors` (
   `BIRTH_DATE` int NOT NULL,
   `DEATH_DATE` int NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `authors`
@@ -49,8 +49,11 @@ INSERT INTO `authors` (`ID`, `SURNAME`, `NAME`, `STYLE`, `BIOGRAPHY`, `BIRTH_DAT
 (3, 'Antoine', 'de Saint-Exupéry', 'écrivain de conte', 'Disparu en vol pendant la seconde Guerre Mondiale.', 1900, 1944),
 (4, 'Victor', 'Hugo', 'romancier dramaturge', 'Ecrivain et homme politique.', 1802, 1885),
 (5, 'Alexandre', 'Dumas', 'romancier d\'aventure', 'Ecrivain du mouvement du romantisme.', 1824, 1895),
-(6, 'TestPrenom', 'TestNom', 'TestStyle', 'TestBiographie', 2015, 2016),
-(7, 'Auteur prénom 2', 'Auteur nom 2', 'classicisme', 'biographie de l\'auteur 2.....', 1800, 1880);
+(9, 'Boris', 'Vian', 'poète', 'chanteur et musicien de jazz', 1920, 1959),
+(11, 'Marcel', 'Proust', 'romanesque', 'Ecrivain français romanesque', 1871, 1922),
+(12, 'Gustave', 'Flaubert', 'romancier', 'Né à Rouen', 1821, 1880),
+(13, 'Guy', 'De Maupassant', 'naturalisme', 'Ecrivain et journaliste littéraire.', 1850, 1893),
+(14, 'Jean', 'De La Fontaine', 'classicisme', 'Poète, fabuliste.', 1621, 1695);
 
 -- --------------------------------------------------------
 
@@ -71,21 +74,23 @@ CREATE TABLE IF NOT EXISTS `books` (
   `availability` int DEFAULT '1',
   PRIMARY KEY (`ID`),
   KEY `AUTHOR_ID` (`AUTHOR_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `books`
 --
 
 INSERT INTO `books` (`ID`, `TITLE`, `AUTHOR_ID`, `GENRE`, `RELEASE_DATE`, `DESCRIPTION`, `NB_PAGES`, `IMAGE`, `availability`) VALUES
-(1, 'L\'étranger', 1, 'roman', 1942, 'Auteur : Albert Camus', 214, '', 1),
-(2, 'Les fleurs du mal', 2, 'poésie', 1857, 'Auteur : Charles Beaudelaire', 345, '', 1),
-(3, 'Le petit prince', 3, 'conte', 1943, 'Auteur : Antoine de Saint Exupéry', 84, '', 1),
-(4, 'Les Misérables', 4, 'roman', 1862, 'Auteur : Victor Hugo', 1201, '', 0),
-(5, 'Le comte de Monte Cristo', 5, 'roman', 1844, 'Auteur : Alexandre Dumas', 1598, '', 1),
-(6, 'NouvTest', 2, 'NouvGenre', 2024, 'desciprtion du nouveau test', 692, NULL, 1),
-(8, 'Livre 3', 5, 'Genre 3', 2000, 'Livre numéro 3', 300, NULL, 1),
-(9, 'Livre 4', 5, 'Genre 4', 2017, 'description du livre 4', 259, NULL, 0);
+(1, 'L\'étranger', 1, 'roman', 1942, 'L\'histoire se déroule à Algers.', 214, '', 1),
+(2, 'Les fleurs du mal', 2, 'poésie', 1857, 'Recueil de poèmes.', 345, '', 1),
+(3, 'Le petit prince', 3, 'conte', 1943, 'Publiée en 1943 à New York.', 84, '', 1),
+(4, 'Les Misérables', 4, 'roman', 1862, 'Décrit la vie de pauvres gens dans Paris.', 1201, '', 0),
+(5, 'Le comte de Monte Cristo', 5, 'roman', 1844, 'Inspiré du récit d\'un fait divers.', 1599, '', 1),
+(13, 'L\'écume des jours', 9, 'conte', 1947, 'Raconte des histoires d\'amour', 304, NULL, 1),
+(14, 'A la recherche du temps perdu', 11, 'roman', 1927, 'Réflexion psychologique sur la littérature.', 1795, NULL, 1),
+(15, 'Madame Bovary', 12, 'réaliste', 1857, 'Histoire de l\'épouse d\'un médecin de province.', 468, NULL, 1),
+(16, 'Bel-Ami', 13, 'réaliste', 1885, 'Retrace l\'ascension sociale de Georges Duroy.', 441, NULL, 1),
+(17, 'Fables', 14, 'fable', 1694, 'Trois recueils de 243 fables.', 243, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -113,7 +118,6 @@ CREATE TABLE IF NOT EXISTS `borrow` (
 INSERT INTO `borrow` (`USER_ID`, `BOOK_ID`, `LEASING_DATE`, `RETURN_DATE`, `GRADE`, `COMMENT`) VALUES
 (3, 2, '2024-02-15', '0000-00-00', NULL, ''),
 (4, 1, '2024-02-01', '2024-02-15', 1, ''),
-(4, 8, '2024-04-12', '2024-04-15', NULL, NULL),
 (5, 4, '2024-04-10', '2024-05-10', NULL, NULL);
 
 -- --------------------------------------------------------
@@ -151,13 +155,13 @@ INSERT INTO `users` (`ID`, `SURNAME`, `NAME`, `EMAIL`, `PASSWORD`, `ADMIN`, `DEB
 -- Contraintes pour la table `books`
 --
 ALTER TABLE `books`
-  ADD CONSTRAINT `books_ibfk_1` FOREIGN KEY (`AUTHOR_ID`) REFERENCES `authors` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `books_ibfk_new` FOREIGN KEY (`AUTHOR_ID`) REFERENCES `authors` (`ID`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 --
 -- Contraintes pour la table `borrow`
 --
 ALTER TABLE `borrow`
-  ADD CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BOOK_ID`) REFERENCES `books` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BOOK_ID`) REFERENCES `books` (`ID`) ON DELETE CASCADE ON UPDATE RESTRICT,
   ADD CONSTRAINT `borrow_ibfk_2` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
