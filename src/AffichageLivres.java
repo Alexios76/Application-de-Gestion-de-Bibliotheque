@@ -20,16 +20,15 @@ public class AffichageLivres extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Panel pour le titre et le champ de recherche
+        // Panneau pour le titre et le champ de recherche
         JPanel titleSearchPanel = new JPanel(new BorderLayout());
 
-        // Titre "Livres disponibles"
         JLabel titleLabel = new JLabel("Livres disponibles");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleSearchPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Panel de recherche
+        // Panneau de recherche
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel searchLabel = new JLabel("Recherche : ");
         JTextField searchField = new JTextField(20);
@@ -93,8 +92,6 @@ public class AffichageLivres extends JFrame {
         JLabel nbPagesLabel = new JLabel("Nombre de pages: " + rs.getInt("NB_PAGES"));
         JLabel authorLabel = new JLabel("Auteur: " + authorFullName);
 
-
-        // Ajout des labels à infoPanel
         infoPanel.add(titleLabel);
         infoPanel.add(authorLabel);
         infoPanel.add(genreLabel);
