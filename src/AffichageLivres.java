@@ -57,14 +57,20 @@ public class AffichageLivres extends JFrame {
 
                 // Pour afficher les détails de l'auteur
                 JButton detailsButton = new JButton("Détails de l'auteur");
+                detailsButton.setPreferredSize(new Dimension(150, 25)); // Taille du bouton
+
                 detailsButton.addActionListener(new DetailsButtonListener(rs.getInt("AUTHOR_ID"))); // Ajoute un gestionnaire d'événements
 
-                // Ajout du bouton à infoPanel
-                infoPanel.add(detailsButton);
+
 
                 livrePanel.add(infoPanel, BorderLayout.CENTER);
 
                 mainPanel.add(livrePanel);
+
+                // Panel pour le bouton Details
+                JPanel detailsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+                detailsPanel.add(detailsButton);
+                mainPanel.add(detailsPanel, BorderLayout.SOUTH); // Ajouter le panneau du bouton sous le panneau d'informations
             }
 
 
