@@ -5,6 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.InputStream; // Import pour InputStream
+import java.io.IOException; // Import pour IOException
+import javax.imageio.ImageIO; // Import pour ImageIO
+import java.awt.image.BufferedImage; // Import pour BufferedImage
 
 public class AffichageLivres extends JFrame {
 
@@ -70,7 +74,7 @@ public class AffichageLivres extends JFrame {
     // Méthode pour afficher les livres disponibles
     private void afficherLivresDisponibles() {
         // Requête SQL pour récupérer les livres disponibles avec les informations sur les auteurs
-        String sql = "SELECT b.TITLE, CONCAT(a.SURNAME, ' ', a.NAME) AS AUTHOR_NAME, a.SURNAME, a.NAME, b.GENRE, b.RELEASE_DATE, b.DESCRIPTION, b.NB_PAGES, a.ID AS AUTHOR_ID " +
+        String sql = "SELECT b.TITLE, CONCAT(a.SURNAME, ' ', a.NAME) AS AUTHOR_NAME, a.SURNAME, a.NAME, b.GENRE, b.RELEASE_DATE, b.DESCRIPTION, b.NB_PAGES, a.ID AS AUTHOR_ID, b.IMAGE " +
                 "FROM books b " +
                 "INNER JOIN authors a ON b.AUTHOR_ID = a.ID ";
 
@@ -98,30 +102,86 @@ public class AffichageLivres extends JFrame {
         JPanel livrePanel = new JPanel(new BorderLayout());
         livrePanel.setBorder(BorderFactory.createEtchedBorder());
 
-        JPanel infoPanel = new JPanel(new GridLayout(0, 1)); // Panneau pour les informations du livre
+        JPanel infoPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(5, 5, 5, 5); // Espacement entre les composants
 
         String authorFirstName = rs.getString("NAME");
         String authorLastName = rs.getString("SURNAME");
         String authorFullName = authorLastName + " " + authorFirstName;
+        String imagePath = rs.getString("IMAGE");
 
+        // JLabel pour afficher l'image
+        if (imagePath != null && !imagePath.isEmpty()) {
+            try (InputStream inputStream = getClass().getResourceAsStream("/images/" + imagePath)) {
+                if (inputStream != null) {
+                    BufferedImage originalImage = ImageIO.read(inputStream);
+
+                    // Redimensionner l'image
+                    int maxSize = 150;
+                    int width = originalImage.getWidth();
+                    int height = originalImage.getHeight();
+                    int newWidth = width;
+                    int newHeight = height;
+
+                    if (width > maxSize || height > maxSize) {
+                        if (width > height) {
+                            newWidth = maxSize;
+                            newHeight = (newWidth * height) / width;
+                        } else {
+                            newHeight = maxSize;
+                            newWidth = (newHeight * width) / height;
+                        }
+                    }
+
+                    // Créer une nouvelle image redimensionnée
+                    Image scaledImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
+                    JLabel coverLabel = new JLabel(scaledIcon);
+                    gbc.gridx = 0;
+                    gbc.gridy = 0;
+                    infoPanel.add(coverLabel, gbc);
+                    gbc.gridy++; // Saut de ligne après l'image
+                } else {
+                    System.out.println("Error loading image: " + imagePath);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Si aucune image n'est disponible, déplacer la grille vers la ligne suivante
+            gbc.gridy++;
+        }
+
+        // Titre du livre
         JLabel titleLabel = new JLabel("Titre: " + rs.getString("TITLE"));
-        JLabel genreLabel = new JLabel("Genre: " + rs.getString("GENRE"));
-        JLabel releaseDateLabel = new JLabel("Date de sortie: " + rs.getInt("RELEASE_DATE"));
-        JLabel descriptionLabel = new JLabel("Description: " + rs.getString("DESCRIPTION"));
-        JLabel nbPagesLabel = new JLabel("Nombre de pages: " + rs.getInt("NB_PAGES"));
-        JLabel authorLabel = new JLabel("Auteur: " + authorFullName);
+        gbc.gridx = 0;
+        infoPanel.add(titleLabel, gbc);
 
-        infoPanel.add(titleLabel);
-        infoPanel.add(authorLabel);
-        infoPanel.add(genreLabel);
-        infoPanel.add(releaseDateLabel);
-        infoPanel.add(descriptionLabel);
-        infoPanel.add(nbPagesLabel);
+        // Autres champs du livre
+        gbc.gridx = 0;
+        gbc.gridy++;
+        JLabel authorLabel = new JLabel("Auteur: " + authorFullName);
+        infoPanel.add(authorLabel, gbc);
+
+        gbc.gridy++;
+        JLabel genreLabel = new JLabel("Genre: " + rs.getString("GENRE"));
+        infoPanel.add(genreLabel, gbc);
+
+        gbc.gridy++;
+        JLabel releaseDateLabel = new JLabel("Date de sortie: " + rs.getInt("RELEASE_DATE"));
+        infoPanel.add(releaseDateLabel, gbc);
+
+        gbc.gridy++;
+        JLabel descriptionLabel = new JLabel("Description: " + rs.getString("DESCRIPTION"));
+        infoPanel.add(descriptionLabel, gbc);
+
+        gbc.gridy++;
+        JLabel nbPagesLabel = new JLabel("Nombre de pages: " + rs.getInt("NB_PAGES"));
+        infoPanel.add(nbPagesLabel, gbc);
 
         // Bouton Détails
-        infoPanel.add(authorLabel);
-
-        // Pour afficher les détails de l'auteur
         JButton detailsButton = new JButton("Détails de l'auteur");
         detailsButton.setPreferredSize(new Dimension(140, 25)); // Taille du bouton
         detailsButton.addActionListener(new DetailsButtonListener(rs.getInt("AUTHOR_ID")));
@@ -135,6 +195,9 @@ public class AffichageLivres extends JFrame {
 
         return livrePanel;
     }
+
+
+
 
     // Gestionnaire d'événements pour le bouton Détails
     class DetailsButtonListener implements ActionListener {
