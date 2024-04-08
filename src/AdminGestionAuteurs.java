@@ -103,6 +103,9 @@ public class AdminGestionAuteurs extends JFrame {
                 JButton deleteButton = new JButton("Supprimer");
                 JButton editButton = new JButton("Modifier");
 
+                // Panneau pour les boutons
+                JPanel buttonPanel = new JPanel(new FlowLayout());
+
                 // Récupération de l'ID de l'auteur
                 int authorID = rs.getInt("ID");
 
@@ -132,11 +135,17 @@ public class AdminGestionAuteurs extends JFrame {
                     }
                 });
 
-                infoPanel.add(deleteButton);
-                infoPanel.add(editButton);
+                // Ajout des boutons au panneau des boutons
+                buttonPanel.add(deleteButton);
+                buttonPanel.add(editButton);
 
+                // Ajout du panneau des boutons au panneau d'informations de l'auteur
+                infoPanel.add(buttonPanel);
+
+                // Ajout du panneau d'informations de l'auteur au panneau auteurPanel
                 authorPanel.add(infoPanel, BorderLayout.CENTER);
 
+                // Ajout du panneau auteurPanel au panneau des auteurs
                 authorsPanel.add(authorPanel);
             }
         } catch (SQLException e) {

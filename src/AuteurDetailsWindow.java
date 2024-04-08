@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -56,6 +58,23 @@ public class AuteurDetailsWindow extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        // Bouton Retour
+        JButton retourButton = new JButton("Retour");
+        retourButton.setPreferredSize(new Dimension(110, 25)); // Taille du bouton
+        retourButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Fermer la fenêtre actuelle
+                dispose();
+            }
+        });
+
+        // Panel pour le bouton Retour
+        JPanel retourPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Alignement au centre
+        retourPanel.add(retourButton);
+        mainPanel.add(retourPanel, BorderLayout.SOUTH); // Ajouter le panneau du bouton sous le panneau d'informations
+
 
         // Ajout du panneau principal à la fenêtre
         getContentPane().add(new JScrollPane(mainPanel));
