@@ -32,6 +32,7 @@ public class AdminNouvLivre extends JFrame {
         JTextField titleField = new JTextField(20);
         JTextField genreField = new JTextField(20);
         JTextField releaseDateField = new JTextField(20);
+        JTextField imageUrlField = new JTextField(20); // Champ pour l'URL de l'image
         JTextArea descriptionArea = new JTextArea(5, 20);
         JScrollPane descriptionScrollPane = new JScrollPane(descriptionArea);
         JTextField nbPagesField = new JTextField(20);
@@ -69,9 +70,10 @@ public class AdminNouvLivre extends JFrame {
                 }
 
                 int authorId = authorIds.get(authorComboBox.getSelectedIndex());
+                String imageUrl = imageUrlField.getText(); // Récupération de l'URL de l'image
 
                 // Requête SQL
-                String sql = "INSERT INTO books (TITLE, AUTHOR_ID, GENRE, RELEASE_DATE, DESCRIPTION, NB_PAGES) VALUES (?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO books (TITLE, AUTHOR_ID, GENRE, RELEASE_DATE, DESCRIPTION, NB_PAGES, IMAGE) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 try {
                     PreparedStatement preparedStatement = cn.prepareStatement(sql);
                     preparedStatement.setString(1, title);
@@ -80,6 +82,7 @@ public class AdminNouvLivre extends JFrame {
                     preparedStatement.setInt(4, releaseDate);
                     preparedStatement.setString(5, description);
                     preparedStatement.setInt(6, nbPages);
+                    preparedStatement.setString(7, imageUrl); // Ajout de l'URL de l'image
 
                     preparedStatement.executeUpdate();
 
@@ -90,12 +93,12 @@ public class AdminNouvLivre extends JFrame {
                     dispose();
                     // Créer une nouvelle instance de AdminGestionLivres pour revenir à cette page
                     new AdminGestionLivres();
-                    
 
                     // Remise à zéro des champs de saisie
                     titleField.setText("");
                     genreField.setText("");
                     releaseDateField.setText("");
+                    imageUrlField.setText(""); // Remise à zéro du champ d'URL de l'image
                     descriptionArea.setText("");
                     nbPagesField.setText("");
 
@@ -111,6 +114,7 @@ public class AdminNouvLivre extends JFrame {
         mainPanel.add(createLabelAndTextField("Titre:", titleField));
         mainPanel.add(createLabelAndTextField("Genre:", genreField));
         mainPanel.add(createLabelAndTextField("Date de parution:", releaseDateField));
+        mainPanel.add(createLabelAndTextField("URL de l'image:", imageUrlField)); // Champ pour l'URL de l'image
         mainPanel.add(createLabelAndTextArea("Description:", descriptionScrollPane));
         mainPanel.add(createLabelAndTextField("Nombre de pages:", nbPagesField));
         mainPanel.add(new JLabel("Auteur:"));
