@@ -31,6 +31,7 @@ public class AdminModifierLivre extends JFrame {
         JTextField titleField = new JTextField(20);
         JTextField genreField = new JTextField(20);
         JTextField releaseDateField = new JTextField(20);
+        JTextField imageUrlField = new JTextField(20); // Champ pour l'URL de l'image
         JTextArea descriptionArea = new JTextArea(5, 20);
         JScrollPane descriptionScrollPane = new JScrollPane(descriptionArea);
         JTextField nbPagesField = new JTextField(20);
@@ -57,9 +58,10 @@ public class AdminModifierLivre extends JFrame {
                     JOptionPane.showMessageDialog(null, "Veuillez saisir un nombre de pages valide");
                     return;
                 }
+                String imageUrl = imageUrlField.getText(); // Récupération de l'URL de l'image
 
                 // Requête SQL
-                String sql = "UPDATE books SET TITLE=?, GENRE=?, RELEASE_DATE=?, DESCRIPTION=?, NB_PAGES=? WHERE ID=?";
+                String sql = "UPDATE books SET TITLE=?, GENRE=?, RELEASE_DATE=?, DESCRIPTION=?, NB_PAGES=?, IMAGE=? WHERE ID=?";
                 try {
                     PreparedStatement preparedStatement = cn.prepareStatement(sql);
                     preparedStatement.setString(1, title);
@@ -67,7 +69,8 @@ public class AdminModifierLivre extends JFrame {
                     preparedStatement.setInt(3, releaseDate);
                     preparedStatement.setString(4, description);
                     preparedStatement.setInt(5, nbPages);
-                    preparedStatement.setInt(6, bookID);
+                    preparedStatement.setString(6, imageUrl);
+                    preparedStatement.setInt(7, bookID);
 
                     preparedStatement.executeUpdate();
 
@@ -96,6 +99,7 @@ public class AdminModifierLivre extends JFrame {
                 titleField.setText(rs.getString("TITLE"));
                 genreField.setText(rs.getString("GENRE"));
                 releaseDateField.setText(String.valueOf(rs.getInt("RELEASE_DATE")));
+                imageUrlField.setText(rs.getString("IMAGE")); // Affichage de l'URL de l'image
                 descriptionArea.setText(rs.getString("DESCRIPTION"));
                 nbPagesField.setText(String.valueOf(rs.getInt("NB_PAGES")));
             }
@@ -106,6 +110,7 @@ public class AdminModifierLivre extends JFrame {
         mainPanel.add(createLabelAndTextField("Titre:", titleField));
         mainPanel.add(createLabelAndTextField("Genre:", genreField));
         mainPanel.add(createLabelAndTextField("Date de parution:", releaseDateField));
+        mainPanel.add(createLabelAndTextField("URL de l'image:", imageUrlField)); // Champ pour l'URL de l'image
         mainPanel.add(createLabelAndTextArea("Description:", descriptionScrollPane));
         mainPanel.add(createLabelAndTextField("Nombre de pages:", nbPagesField));
         mainPanel.add(saveButton);
