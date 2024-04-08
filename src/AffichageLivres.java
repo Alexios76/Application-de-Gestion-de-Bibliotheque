@@ -219,20 +219,73 @@ public class AffichageLivres extends JFrame {
             String searchTerm = ((JTextField) e.getSource()).getText().trim().toLowerCase();
 
             for (JPanel panel : livrePanels) {
-                String title = ((JLabel) ((JPanel) panel.getComponent(0)).getComponent(0)).getText().toLowerCase();
-                String author = ((JLabel) ((JPanel) panel.getComponent(0)).getComponent(1)).getText().toLowerCase();
-                String authorFirstName = ((JLabel) ((JPanel) panel.getComponent(0)).getComponent(4)).getText().toLowerCase();
-                String authorLastName = ((JLabel) ((JPanel) panel.getComponent(0)).getComponent(5)).getText().toLowerCase();
-                String genre = ((JLabel) ((JPanel) panel.getComponent(0)).getComponent(2)).getText().toLowerCase();
+                JPanel infoPanel = (JPanel) panel.getComponent(0);
 
-                if (title.contains(searchTerm) || author.contains(searchTerm) || genre.contains(searchTerm) || authorFirstName.contains(searchTerm) || authorLastName.contains(searchTerm)) {
-                    panel.setVisible(true);
-                } else {
-                    panel.setVisible(false);
+                // Vérifie si le composant JLabel contenant le genre existe
+                if (infoPanel.getComponentCount() > 3 && infoPanel.getComponent(3) instanceof JLabel) {
+                    JLabel genreComponent = (JLabel) infoPanel.getComponent(3);
+                    String genreText = genreComponent.getText();
+
+                    // Extrait uniquement le genre du texte du JLabel
+                    String[] parts = genreText.split(":");
+                    if (parts.length > 1) {
+                        String genre = parts[1].trim().toLowerCase(); // Le genre est la deuxième partie du texte
+
+                        // Vérifie si le genre contient le terme de recherche
+                        if (genre.contains(searchTerm)) {
+                            panel.setVisible(true);
+                            continue;
+                        }
+                    }
                 }
+
+
+                // Vérifie si le composant JLabel contenant l'auteur existe
+                if (infoPanel.getComponentCount() > 1 && infoPanel.getComponent(1) instanceof JLabel) {
+                    JLabel authorComponent = (JLabel) infoPanel.getComponent(1);
+                    String author = authorComponent.getText();
+                    if (author != null && author.toLowerCase().contains(searchTerm)) {
+                        panel.setVisible(true);
+                        continue;
+                    }
+                }
+
+                // Vérifie si le composant JLabel contenant le genre existe
+                if (infoPanel.getComponentCount() > 2 && infoPanel.getComponent(2) instanceof JLabel) {
+                    JLabel genreComponent = (JLabel) infoPanel.getComponent(2);
+                    String genre = genreComponent.getText();
+                    if (genre != null && genre.toLowerCase().contains(searchTerm)) {
+                        panel.setVisible(true);
+                        continue;
+                    }
+                }
+
+                // Vérifie si le composant JLabel contenant le prénom de l'auteur existe
+                if (infoPanel.getComponentCount() > 4 && infoPanel.getComponent(4) instanceof JLabel) {
+                    JLabel authorFirstNameComponent = (JLabel) infoPanel.getComponent(4);
+                    String authorFirstName = authorFirstNameComponent.getText();
+                    if (authorFirstName != null && authorFirstName.toLowerCase().contains(searchTerm)) {
+                        panel.setVisible(true);
+                        continue;
+                    }
+                }
+
+                // Vérifie si le composant JLabel contenant le nom de l'auteur existe
+                if (infoPanel.getComponentCount() > 5 && infoPanel.getComponent(5) instanceof JLabel) {
+                    JLabel authorLastNameComponent = (JLabel) infoPanel.getComponent(5);
+                    String authorLastName = authorLastNameComponent.getText();
+                    if (authorLastName != null && authorLastName.toLowerCase().contains(searchTerm)) {
+                        panel.setVisible(true);
+                        continue;
+                    }
+                }
+
+                // Si aucun des critères de recherche n'est trouvé, cache le panel
+                panel.setVisible(false);
             }
         }
     }
+
 
     // Gestionnaire d'événements pour la case à cocher "Disponible"
     class DisponibleCheckBoxListener implements ItemListener {
