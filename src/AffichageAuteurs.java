@@ -131,6 +131,6 @@ public class AffichageAuteurs extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AffichageAuteurs(3)); // Utilisateur avec ID 3
+        SwingUtilities.invokeLater(() -> new AffichageAuteurs(3));
     }
 }
