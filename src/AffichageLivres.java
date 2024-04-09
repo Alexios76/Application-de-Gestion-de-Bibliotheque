@@ -28,7 +28,6 @@ public class AffichageLivres extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Barre de navigation
         JMenuBar menuBar = new JMenuBar();
 
         JMenuItem livresBibliothequeItem = new JMenuItem("Livres de la bibliothèque");
@@ -66,7 +65,7 @@ public class AffichageLivres extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageCompte();
+                new AffichageCompte(userID);
             }
         });
         menuBar.add(monCompteItem);
@@ -83,7 +82,6 @@ public class AffichageLivres extends JFrame {
 
         setJMenuBar(menuBar);
 
-        // Reste du code pour la fenêtre principale
         JPanel titleSearchPanel = new JPanel(new BorderLayout());
         JLabel titleLabel = new JLabel("Livres disponibles");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
@@ -112,7 +110,7 @@ public class AffichageLivres extends JFrame {
 
         livrePanels = new ArrayList<>();
 
-        // Affichage initial des livres disponibles
+        // Affichage des livres disponibles
         afficherLivresDisponibles();
 
         mainPanel.add(new JScrollPane(livresPanel), BorderLayout.CENTER);
