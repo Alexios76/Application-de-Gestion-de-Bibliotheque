@@ -13,53 +13,47 @@ public class LoginFrame extends JFrame {
     private JButton loginButton;
     private JButton registerButton;
     private JLabel loginTitle;
-    private int userId; // Ajout de la variable pour stocker l'ID de l'utilisateur connecté
+    private int userId; // Pour stocker l'ID de l'utilisateur connecté
 
     public LoginFrame() {
-        // Paramètres de la fenêtre de connexion
         setTitle("Système de gestion de bibliothèque - Connexion");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        // Initialisation des composants
         emailField = new JTextField(20);
         passwordField = new JPasswordField(20);
         loginButton = new JButton("Se connecter");
         registerButton = new JButton("Créer un compte");
         loginTitle = new JLabel("Connexion", SwingConstants.CENTER);
 
-        // Style des composants
         loginButton.setBackground(Color.LIGHT_GRAY);
         registerButton.setBackground(Color.LIGHT_GRAY);
         loginTitle.setFont(new Font("Arial", Font.BOLD, 24));
 
-        // Configuration du layout
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panel.add(loginTitle);
-        panel.add(Box.createVerticalStrut(20)); // Espacement vertical
+        panel.add(Box.createVerticalStrut(20));
         panel.add(new JLabel("Email :"));
         panel.add(emailField);
         panel.add(new JLabel("Mot de passe :"));
         panel.add(passwordField);
-        panel.add(Box.createVerticalStrut(20)); // Espacement vertical
+        panel.add(Box.createVerticalStrut(20));
         panel.add(loginButton);
-        panel.add(Box.createVerticalStrut(5)); // Espacement vertical
+        panel.add(Box.createVerticalStrut(5));
         panel.add(registerButton);
 
-        // Ajout des composants à la fenêtre
         add(panel, BorderLayout.CENTER);
 
-        // Ajustement de la taille de la fenêtre au contenu
         pack();
-        setLocationRelativeTo(null); // Centrage de la fenêtre sur l'écran
+        setLocationRelativeTo(null);
         setVisible(true);
 
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ouvrirAffichageEmprunts(); // Utilisation de la méthode pour gérer l'authentification et l'ouverture d'AffichageEmprunts
+                ouvrirAffichageEmprunts();
             }
         });
 
