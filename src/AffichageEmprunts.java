@@ -1,16 +1,19 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AffichageAuteurs extends JFrame {
+public class AffichageEmprunts extends JFrame {
 
     private Connexion connexion;
     private int userID;
 
-    public AffichageAuteurs(int userID) {
-        super("Liste des auteurs");
+    public AffichageEmprunts(int userID) {
+        super("Liste des emprunts");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.userID = userID;
 
@@ -27,7 +30,7 @@ public class AffichageAuteurs extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageLivres(userID); // Passer l'ID de l'utilisateur connecté
+                new AffichageLivres(userID);
             }
         });
         menuBar.add(livresBibliothequeItem);
@@ -37,7 +40,7 @@ public class AffichageAuteurs extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageAuteurs(userID); // Passer l'ID de l'utilisateur connecté
+                new AffichageAuteurs(userID);
             }
         });
         menuBar.add(biographieAuteursItem);
@@ -47,7 +50,7 @@ public class AffichageAuteurs extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageEmprunts(userID); // Passer l'ID de l'utilisateur connecté
+                new AffichageEmprunts(userID);
             }
         });
         menuBar.add(mesEmpruntsItem);
@@ -77,50 +80,52 @@ public class AffichageAuteurs extends JFrame {
         // Reste du code pour la fenêtre principale
         JPanel titleSearchPanel = new JPanel(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Liste des auteurs");
+        JLabel titleLabel = new JLabel("Liste des emprunts");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleSearchPanel.add(titleLabel, BorderLayout.NORTH);
 
         mainPanel.add(titleSearchPanel, BorderLayout.NORTH);
 
-        JPanel auteurListPanel = new JPanel(new GridLayout(0, 1));
+        JPanel empruntsListPanel = new JPanel(new GridLayout(0, 1));
 
-        // Requête SQL pour récupérer les auteurs
-        String sql = "SELECT * FROM authors";
+        // Requête SQL pour récupérer les emprunts de l'utilisateur connecté
+        String sql = "SELECT b.TITLE, a.SURNAME, a.NAME, br.LEASING_DATE, br.RETURN_DATE " +
+                "FROM borrow br " +
+                "JOIN books b ON br.BOOK_ID = b.ID " +
+                "JOIN authors a ON b.AUTHOR_ID = a.ID " +
+                "WHERE br.USER_ID = ?";
         try {
-            ResultSet rs = connexion.query(sql);
+            PreparedStatement pst = connexion.nouvelleConnexion().prepareStatement(sql);
+            pst.setInt(1, userID);
+            ResultSet rs = pst.executeQuery();
 
-            // Parcours des résultats et affichage des informations des auteurs
+            // Parcours des résultats et affichage des informations des emprunts
             while (rs.next()) {
-                JPanel auteurPanel = new JPanel(new BorderLayout());
-                auteurPanel.setBorder(BorderFactory.createEtchedBorder());
+                JPanel empruntPanel = new JPanel(new BorderLayout());
+                empruntPanel.setBorder(BorderFactory.createEtchedBorder());
 
-                JPanel infoPanel = new JPanel(new GridLayout(0, 1)); // Panneau pour les informations de l'auteur
+                JPanel infoPanel = new JPanel(new GridLayout(0, 1)); // Panneau pour les informations de l'emprunt
 
-                JLabel surnameLabel = new JLabel("Prénom: " + rs.getString("SURNAME"));
-                JLabel nameLabel = new JLabel("Nom: " + rs.getString("NAME"));
-                JLabel styleLabel = new JLabel("Style: " + rs.getString("STYLE"));
-                JLabel biographyLabel = new JLabel("Biographie: " + rs.getString("BIOGRAPHY"));
-                JLabel birthDateLabel = new JLabel("Date de naissance: " + rs.getInt("BIRTH_DATE"));
-                JLabel deathDateLabel = new JLabel("Date de mort: " + rs.getInt("DEATH_DATE"));
+                JLabel titleLabel2 = new JLabel("Titre du livre: " + rs.getString("TITLE"));
+                JLabel authorLabel = new JLabel("Auteur: " + rs.getString("SURNAME") + " " + rs.getString("NAME"));
+                JLabel leasingDateLabel = new JLabel("Date d'emprunt: " + rs.getDate("LEASING_DATE"));
+                JLabel returnDateLabel = new JLabel("Date de retour: " + rs.getDate("RETURN_DATE"));
 
-                infoPanel.add(surnameLabel);
-                infoPanel.add(nameLabel);
-                infoPanel.add(styleLabel);
-                infoPanel.add(biographyLabel);
-                infoPanel.add(birthDateLabel);
-                infoPanel.add(deathDateLabel);
+                infoPanel.add(titleLabel2);
+                infoPanel.add(authorLabel);
+                infoPanel.add(leasingDateLabel);
+                infoPanel.add(returnDateLabel);
 
-                auteurPanel.add(infoPanel, BorderLayout.CENTER);
+                empruntPanel.add(infoPanel, BorderLayout.CENTER);
 
-                auteurListPanel.add(auteurPanel);
+                empruntsListPanel.add(empruntPanel);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        mainPanel.add(new JScrollPane(auteurListPanel), BorderLayout.CENTER);
+        mainPanel.add(new JScrollPane(empruntsListPanel), BorderLayout.CENTER);
 
         getContentPane().add(mainPanel);
 
@@ -131,6 +136,6 @@ public class AffichageAuteurs extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AffichageAuteurs(3)); // Utilisateur avec ID 3
+        SwingUtilities.invokeLater(() -> new AffichageEmprunts(3)); // Utilisateur avec ID 3
     }
 }

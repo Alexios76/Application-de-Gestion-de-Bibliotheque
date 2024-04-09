@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -13,14 +15,11 @@ public class AuteurDetailsWindow extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.authorId = authorId;
 
-        // Initialisation de la connexion à la base de données
         connexion = new Connexion();
         connexion.nouvelleConnexion();
 
-        // Création du panneau principal
         JPanel mainPanel = new JPanel(new GridLayout(0, 1));
 
-        // Ajout du titre "Fiche de l'auteur"
         JLabel titleLabel = new JLabel("Fiche de l'auteur");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Police en gras, taille 20
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER); // Centrer le texte
@@ -31,7 +30,7 @@ public class AuteurDetailsWindow extends JFrame {
         try {
             ResultSet rs = connexion.query(sql);
 
-            // Parcours des résultats et affichage des informations de l'auteur
+            // Affichage des informations de l'auteur
             while (rs.next()) {
                 JPanel auteurPanel = new JPanel(new BorderLayout());
                 auteurPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -60,17 +59,34 @@ public class AuteurDetailsWindow extends JFrame {
             e.printStackTrace();
         }
 
+        // Bouton Retour
+        JButton retourButton = new JButton("Retour");
+        retourButton.setPreferredSize(new Dimension(110, 25)); // Taille du bouton
+        retourButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Fermer la fenêtre actuelle
+                dispose();
+            }
+        });
+
+        // Panel pour le bouton Retour
+        JPanel retourPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Alignement au centre
+        retourPanel.add(retourButton);
+        mainPanel.add(retourPanel, BorderLayout.SOUTH); // Ajouter le panneau du bouton sous le panneau d'informations
+
+
         // Ajout du panneau principal à la fenêtre
         getContentPane().add(new JScrollPane(mainPanel));
 
         // Taille de la fenêtre
-        setSize(400, 500); // Taille (largeur/hauteur)
+        setSize(400, 500);
 
-        setLocationRelativeTo(null); // Pour centrer la fenêtre
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AuteurDetailsWindow(1)); // Pour tester
+        SwingUtilities.invokeLater(() -> new AuteurDetailsWindow(1));
     }
 }
