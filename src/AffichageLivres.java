@@ -85,12 +85,13 @@ public class AffichageLivres extends JFrame {
 
         // Reste du code pour la fenêtre principale
         JPanel titleSearchPanel = new JPanel(new BorderLayout());
-
         JLabel titleLabel = new JLabel("Livres disponibles");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleSearchPanel.add(titleLabel, BorderLayout.NORTH);
 
+
+        // Panneau de recherche
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel searchLabel = new JLabel("Recherche : ");
         JTextField searchField = new JTextField(20);
@@ -111,6 +112,7 @@ public class AffichageLivres extends JFrame {
 
         livrePanels = new ArrayList<>();
 
+        // Affichage initial des livres disponibles
         afficherLivresDisponibles();
 
         mainPanel.add(new JScrollPane(livresPanel), BorderLayout.CENTER);
@@ -307,7 +309,6 @@ public class AffichageLivres extends JFrame {
             }
         }
     }
-
     class DisponibleCheckBoxListener implements ItemListener {
         public void itemStateChanged(ItemEvent e) {
             livrePanels.clear();

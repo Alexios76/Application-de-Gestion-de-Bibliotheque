@@ -115,18 +115,23 @@ public class AdminListeEmprunts extends JFrame {
 
                 empruntPanel.add(infoPanel, BorderLayout.CENTER);
 
+                // Bouton Supprimer
                 JButton deleteButton = new JButton("Supprimer");
-                deleteButton.setPreferredSize(new Dimension(110, 25));
+                deleteButton.setPreferredSize(new Dimension(110, 25)); // Taille du bouton
                 deleteButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        // Suppression de l'emprunt avec les IDs correspondants
                         deleteBorrow(userId, bookId);
                     }
                 });
 
-                JPanel deletePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+                // Panel pour le bouton Supprimer
+                JPanel deletePanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Alignement au centre
                 deletePanel.add(deleteButton);
-                empruntPanel.add(deletePanel, BorderLayout.SOUTH);
+                empruntPanel.add(deletePanel, BorderLayout.SOUTH); // Panneau du bouton sous le panneau d'informations
+
 
                 mainPanel.add(empruntPanel);
             }
