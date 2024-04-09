@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : dim. 07 avr. 2024 à 15:17
+-- Généré le : lun. 08 avr. 2024 à 14:54
 -- Version du serveur : 8.2.0
 -- Version de PHP : 8.2.13
 
@@ -81,16 +81,16 @@ CREATE TABLE IF NOT EXISTS `books` (
 --
 
 INSERT INTO `books` (`ID`, `TITLE`, `AUTHOR_ID`, `GENRE`, `RELEASE_DATE`, `DESCRIPTION`, `NB_PAGES`, `IMAGE`, `availability`) VALUES
-(1, 'L\'étranger', 1, 'roman', 1942, 'L\'histoire se déroule à Algers.', 214, '', 1),
-(2, 'Les fleurs du mal', 2, 'poésie', 1857, 'Recueil de poèmes.', 345, '', 1),
-(3, 'Le petit prince', 3, 'conte', 1943, 'Publiée en 1943 à New York.', 84, '', 1),
-(4, 'Les Misérables', 4, 'roman', 1862, 'Décrit la vie de pauvres gens dans Paris.', 1201, '', 0),
-(5, 'Le comte de Monte Cristo', 5, 'roman', 1844, 'Inspiré du récit d\'un fait divers.', 1599, '', 1),
-(13, 'L\'écume des jours', 9, 'conte', 1947, 'Raconte des histoires d\'amour', 304, NULL, 1),
-(14, 'A la recherche du temps perdu', 11, 'roman', 1927, 'Réflexion psychologique sur la littérature.', 1795, NULL, 1),
-(15, 'Madame Bovary', 12, 'réaliste', 1857, 'Histoire de l\'épouse d\'un médecin de province.', 468, NULL, 1),
-(16, 'Bel-Ami', 13, 'réaliste', 1885, 'Retrace l\'ascension sociale de Georges Duroy.', 441, NULL, 1),
-(17, 'Fables', 14, 'fable', 1694, 'Trois recueils de 243 fables.', 243, NULL, 1);
+(1, 'L\'étranger', 1, 'roman', 1942, 'L\'histoire se déroule à Algers.', 214, 'letranger.jpg', 1),
+(2, 'Les fleurs du mal', 2, 'poésie', 1857, 'Recueil de poèmes.', 345, 'lesfleursdumal.jpg', 1),
+(3, 'Le petit prince', 3, 'conte', 1943, 'Publiée en 1943 à New York.', 84, 'lepetitprince.jpg', 1),
+(4, 'Les Misérables', 4, 'roman', 1862, 'Décrit la vie de pauvres gens dans Paris.', 1201, 'lesmiserables.jpg', 0),
+(5, 'Le comte de Monte Cristo', 5, 'roman', 1844, 'Inspiré du récit d\'un fait divers.', 1599, 'lecomtedemontecristo.jpg', 1),
+(13, 'L\'écume des jours', 9, 'conte', 1947, 'Raconte des histoires d\'amour', 304, 'lecumedesjours.jpg', 1),
+(14, 'A la recherche du temps perdu', 11, 'roman', 1927, 'Réflexion psychologique sur la littérature.', 1795, 'alarecherchedutempsperdu.jpg', 1),
+(15, 'Madame Bovary', 12, 'roman réaliste', 1857, 'Histoire de l\'épouse d\'un médecin de province.', 468, 'madamebovary.jpg', 1),
+(16, 'Bel-Ami', 13, 'roman réaliste', 1885, 'Retrace l\'ascension sociale de Georges Duroy.', 441, 'belami.jpg', 1),
+(17, 'Fables', 14, 'fable', 1694, 'Trois recueils de 243 fables.', 243, 'fables.jpg', 1);
 
 -- --------------------------------------------------------
 

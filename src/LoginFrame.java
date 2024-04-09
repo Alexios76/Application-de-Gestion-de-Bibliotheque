@@ -11,7 +11,9 @@ public class LoginFrame extends JFrame {
     private JTextField emailField;
     private JPasswordField passwordField;
     private JButton loginButton;
+    private JButton registerButton;
     private JLabel loginTitle;
+    private int userId; // Ajout de la variable pour stocker l'ID de l'utilisateur connecté
 
     public LoginFrame() {
         // Paramètres de la fenêtre de connexion
@@ -23,50 +25,68 @@ public class LoginFrame extends JFrame {
         emailField = new JTextField(20);
         passwordField = new JPasswordField(20);
         loginButton = new JButton("Se connecter");
+        registerButton = new JButton("Créer un compte");
         loginTitle = new JLabel("Connexion", SwingConstants.CENTER);
 
         // Style des composants
         loginButton.setBackground(Color.LIGHT_GRAY);
+        registerButton.setBackground(Color.LIGHT_GRAY);
         loginTitle.setFont(new Font("Arial", Font.BOLD, 24));
 
         // Configuration du layout
-        JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(loginTitle);
+        panel.add(Box.createVerticalStrut(20)); // Espacement vertical
         panel.add(new JLabel("Email :"));
         panel.add(emailField);
         panel.add(new JLabel("Mot de passe :"));
         panel.add(passwordField);
+        panel.add(Box.createVerticalStrut(20)); // Espacement vertical
+        panel.add(loginButton);
+        panel.add(Box.createVerticalStrut(5)); // Espacement vertical
+        panel.add(registerButton);
 
         // Ajout des composants à la fenêtre
-        add(loginTitle, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
-        add(loginButton, BorderLayout.SOUTH);
-
 
         // Ajustement de la taille de la fenêtre au contenu
         pack();
         setLocationRelativeTo(null); // Centrage de la fenêtre sur l'écran
         setVisible(true);
 
-
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String email = emailField.getText();
-                String password = String.valueOf(passwordField.getPassword());
-                if (authentifier(email, password)) {
-                    JOptionPane.showMessageDialog(LoginFrame.this, "Connexion réussie !");
-                    // Passe à la fenêtre principale ici
-                    new MainPageFrame().setVisible(true);
-                    LoginFrame.this.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(LoginFrame.this, "Email ou mot de passe incorrect.",
-                            "Erreur de Connexion", JOptionPane.ERROR_MESSAGE);
-                }
+                ouvrirAffichageEmprunts(); // Utilisation de la méthode pour gérer l'authentification et l'ouverture d'AffichageEmprunts
             }
         });
 
-        setVisible(true);
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Ouvre la fenêtre de création de compte
+                new RegisterFrame().setVisible(true);
+                LoginFrame.this.dispose();
+            }
+        });
+    }
+
+    private void ouvrirAffichageEmprunts() {
+        if (authentifier(emailField.getText(), String.valueOf(passwordField.getPassword()))) {
+            JOptionPane.showMessageDialog(LoginFrame.this, "Connexion réussie !");
+            // Redirection en fonction du type de compte
+            if (isAdmin(emailField.getText())) {
+                new AdminGestionLivres().setVisible(true);
+            } else {
+                new AffichageLivres(userId).setVisible(true); // Passage de l'ID de l'utilisateur
+            }
+            LoginFrame.this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(LoginFrame.this, "Email ou mot de passe incorrect.",
+                    "Erreur de Connexion", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private boolean authentifier(String email, String password) {
@@ -75,13 +95,37 @@ public class LoginFrame extends JFrame {
 
         if (cn != null) {
             try {
-                String sql = "SELECT * FROM users WHERE EMAIL = ? AND PASSWORD = ?";
+                String sql = "SELECT ID FROM users WHERE EMAIL = ? AND PASSWORD = ?";
                 PreparedStatement pst = cn.prepareStatement(sql);
                 pst.setString(1, email);
                 pst.setString(2, password);
                 ResultSet rs = pst.executeQuery();
 
-                return rs.next(); // Si le résultat est non vide, les identifiants sont corrects
+                if (rs.next()) {
+                    userId = rs.getInt("ID"); // Stockage de l'ID de l'utilisateur connecté
+                    return true;
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    private boolean isAdmin(String email) {
+        Connexion connexion = new Connexion();
+        Connection cn = connexion.nouvelleConnexion();
+
+        if (cn != null) {
+            try {
+                String sql = "SELECT ADMIN FROM users WHERE EMAIL = ?";
+                PreparedStatement pst = cn.prepareStatement(sql);
+                pst.setString(1, email);
+                ResultSet rs = pst.executeQuery();
+
+                if (rs.next()) {
+                    return rs.getInt("ADMIN") == 1; // Si ADMIN vaut 1, l'utilisateur est un admin
+                }
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -90,6 +134,6 @@ public class LoginFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-        new LoginFrame();
+        SwingUtilities.invokeLater(LoginFrame::new);
     }
 }

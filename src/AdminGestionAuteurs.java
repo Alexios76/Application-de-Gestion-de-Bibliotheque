@@ -21,6 +21,65 @@ public class AdminGestionAuteurs extends JFrame {
 
         mainPanel = new JPanel(new BorderLayout());
 
+        // Barre de navigation
+        JMenuBar menuBar = new JMenuBar();
+
+        // Menu "Gestion des livres"
+        JMenuItem gestionLivresItem = new JMenuItem("Gestion des livres");
+        gestionLivresItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirection vers la page de gestion des livres
+                dispose(); // Fermer la fenêtre actuelle
+                new AdminGestionLivres(); // Ouvrir la fenêtre de gestion des livres
+            }
+        });
+        menuBar.add(gestionLivresItem);
+
+        // Menu "Gestion des auteurs"
+        JMenuItem gestionAuteursItem = new JMenuItem("Gestion des auteurs");
+        gestionAuteursItem.setEnabled(false); // Désactiver le menu actuel
+        menuBar.add(gestionAuteursItem);
+
+        // Menu "Gestion des emprunts"
+        JMenuItem gestionEmpruntsItem = new JMenuItem("Gestion des emprunts");
+        gestionEmpruntsItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirection vers la page de gestion des emprunts
+                dispose(); // Fermer la fenêtre actuelle
+                new AdminListeEmprunts(); // Ouvrir la fenêtre de gestion des emprunts
+            }
+        });
+        menuBar.add(gestionEmpruntsItem);
+
+        // Menu "Gestion des utilisateurs"
+        JMenuItem gestionUtilisateursItem = new JMenuItem("Gestion des utilisateurs");
+        gestionUtilisateursItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirection vers la page de gestion des utilisateurs
+                dispose(); // Fermer la fenêtre actuelle
+                new AdminGestionUtilisateurs(); // Ouvrir la fenêtre de gestion des utilisateurs
+            }
+        });
+        menuBar.add(gestionUtilisateursItem);
+
+        // Menu "Déconnexion"
+        JMenuItem deconnexionItem = new JMenuItem("Déconnexion");
+        deconnexionItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirection vers la page de connexion
+                dispose(); // Fermer la fenêtre actuelle
+                new LoginFrame(); // Ouvrir la fenêtre de connexion
+            }
+        });
+        menuBar.add(deconnexionItem);
+
+        setJMenuBar(menuBar);
+
+        // Titre de la page
         JLabel title = new JLabel("Gestion des auteurs");
         title.setFont(new Font("Arial", Font.BOLD, 24));
         title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -67,7 +126,7 @@ public class AdminGestionAuteurs extends JFrame {
         getContentPane().add(mainPanel);
 
         // Taille de la fenêtre
-        setSize(400, 600);
+        setSize(800, 600); // Taille ajustée pour correspondre à celle de MainPageFrame
         setLocationRelativeTo(null);
         setVisible(true);
     }

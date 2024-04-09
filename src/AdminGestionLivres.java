@@ -21,6 +21,65 @@ public class AdminGestionLivres extends JFrame {
 
         mainPanel = new JPanel(new BorderLayout());
 
+        // Barre de navigation
+        JMenuBar menuBar = new JMenuBar();
+
+        // Menu "Gestion des livres" (déjà sélectionné)
+        JMenuItem gestionLivresItem = new JMenuItem("Gestion des livres");
+        gestionLivresItem.setEnabled(false); // Désactiver le lien de redirection vers la même page
+        menuBar.add(gestionLivresItem);
+
+        // Menu "Gestion des auteurs"
+        JMenuItem gestionAuteursItem = new JMenuItem("Gestion des auteurs");
+        gestionAuteursItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirection vers la page de gestion des auteurs
+                dispose(); // Fermer la fenêtre actuelle
+                new AdminGestionAuteurs();
+            }
+        });
+        menuBar.add(gestionAuteursItem);
+
+        // Menu "Gestion des emprunts"
+        JMenuItem gestionEmpruntsItem = new JMenuItem("Gestion des emprunts");
+        gestionEmpruntsItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirection vers la page de gestion des emprunts
+                dispose(); // Fermer la fenêtre actuelle
+                new AdminListeEmprunts();
+            }
+        });
+        menuBar.add(gestionEmpruntsItem);
+
+
+        // Menu "Gestion des utilisateurs"
+        JMenuItem gestionUtilisateursItem = new JMenuItem("Gestion des utilisateurs");
+        gestionUtilisateursItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirection vers la page de gestion des utilisateurs
+                dispose(); // Fermer la fenêtre actuelle
+                new AdminGestionUtilisateurs();
+            }
+        });
+        menuBar.add(gestionUtilisateursItem);
+
+        // Menu "Déconnexion"
+        JMenuItem deconnexionItem = new JMenuItem("Déconnexion");
+        deconnexionItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirection vers la page de connexion
+                dispose(); // Fermer la fenêtre actuelle
+                new LoginFrame().setVisible(true);
+            }
+        });
+        menuBar.add(deconnexionItem);
+
+        setJMenuBar(menuBar);
+
         JLabel title = new JLabel("Gestion des livres");
         title.setFont(new Font("Arial", Font.BOLD, 24));
         title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -67,7 +126,7 @@ public class AdminGestionLivres extends JFrame {
         getContentPane().add(mainPanel);
 
         // Taille de la fenêtre
-        setSize(400, 600);
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -207,11 +266,7 @@ public class AdminGestionLivres extends JFrame {
                 String bookTitle = rs.getString("TITLE");
                 if (availability == 1) {
                     // Afficher la fenêtre d'emprunt
-                    // Afficher la fenêtre d'emprunt
                     new EmpruntLivre(bookID, bookTitle, connexion);
-
-
-
                 } else {
                     int confirmation = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment retourner ce livre ?");
                     if (confirmation == JOptionPane.YES_OPTION) {
@@ -232,10 +287,6 @@ public class AdminGestionLivres extends JFrame {
             JOptionPane.showMessageDialog(null, "Erreur lors de la mise à jour de la disponibilité du livre !");
         }
     }
-
-
-
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AdminGestionLivres::new);

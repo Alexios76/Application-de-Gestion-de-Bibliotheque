@@ -86,7 +86,6 @@ public class EmpruntLivre extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-    
     private void loadUserList() {
         String sql = "SELECT ID, CONCAT(SURNAME, ' ', NAME) AS FULL_NAME FROM users";
         try {
