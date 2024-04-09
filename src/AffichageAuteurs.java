@@ -57,7 +57,7 @@ public class AffichageAuteurs extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageCompte();
+                new AffichageCompte(userID);
             }
         });
         menuBar.add(monCompteItem);
