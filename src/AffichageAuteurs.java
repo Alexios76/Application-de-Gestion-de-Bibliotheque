@@ -7,12 +7,10 @@ import java.sql.SQLException;
 public class AffichageAuteurs extends JFrame {
 
     private Connexion connexion;
-    private int userID;
 
-    public AffichageAuteurs(int userID) {
+    public AffichageAuteurs() {
         super("Liste des auteurs");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.userID = userID;
 
         connexion = new Connexion();
         connexion.nouvelleConnexion();
@@ -27,7 +25,7 @@ public class AffichageAuteurs extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageLivres(userID); // Passer l'ID de l'utilisateur connecté
+                new AffichageLivres();
             }
         });
         menuBar.add(livresBibliothequeItem);
@@ -37,7 +35,7 @@ public class AffichageAuteurs extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageAuteurs(userID); // Passer l'ID de l'utilisateur connecté
+                new AffichageAuteurs();
             }
         });
         menuBar.add(biographieAuteursItem);
@@ -47,7 +45,7 @@ public class AffichageAuteurs extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageEmprunts(userID); // Passer l'ID de l'utilisateur connecté
+                new AffichageEmprunts(); // Passer l'ID de l'utilisateur connecté
             }
         });
         menuBar.add(mesEmpruntsItem);
@@ -131,6 +129,6 @@ public class AffichageAuteurs extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AffichageAuteurs(3)); // Utilisateur avec ID 3
+        SwingUtilities.invokeLater(() -> new AffichageAuteurs()); // Utilisateur avec ID 3
     }
 }

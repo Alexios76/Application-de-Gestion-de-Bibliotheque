@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 
 public class MainPageFrame extends JFrame implements ActionListener {
     public MainPageFrame() {
-        setTitle("Système de Gestion de Bibliothèque");
+        setTitle("Ma Bibliothèque");
         setSize(800, 600); // Dimension de la fenêtre
         setLocationRelativeTo(null); // Centrer la fenêtre
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,10 +40,12 @@ public class MainPageFrame extends JFrame implements ActionListener {
                 System.exit(0);
                 break;
             case "Catalogue":
-                JOptionPane.showMessageDialog(this, "Coming soon");
+                new AffichageLivres();
+                dispose(); // Fermer la fenêtre actuelle
                 break;
             case "Mes Livres":
                 JOptionPane.showMessageDialog(this, "Coming soon");
+                // Liste des livres empruntés
                 break;
             case "Historique":
                 JOptionPane.showMessageDialog(this, "Coming soon");

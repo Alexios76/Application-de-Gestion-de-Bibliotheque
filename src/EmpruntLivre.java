@@ -17,7 +17,7 @@ public class EmpruntLivre extends JFrame {
     private JTextField returnDateField;
 
     public EmpruntLivre(int bookID, String bookTitle, Connexion connexion) {
-        super("Emprunt du livre");
+        super("Emprunt du livre - "+ Utilisateur.getName() + " " + Utilisateur.getSurname());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.bookID = bookID;
         this.connexion = connexion;
@@ -121,7 +121,7 @@ public class EmpruntLivre extends JFrame {
 
     // Ajout de l'emprunt à la base  de données
     private void addBorrowRecord(int userID, int bookID, String leasingDate, String returnDate) throws SQLException {
-        String sql = "INSERT INTO borrow (USER_ID, BOOK_ID, LEASING_DATE, RETURN_DATE) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO borrow (USER_ID, BOOK_ID, LEASING_DATE, RETURN_DATE, COMMENT) VALUES (?, ?, ?, ?, '')";
         try (PreparedStatement preparedStatement = connexion.nouvelleConnexion().prepareStatement(sql)) {
             preparedStatement.setInt(1, userID);
             preparedStatement.setInt(2, bookID);

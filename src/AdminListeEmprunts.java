@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class AdminListeEmprunts extends JFrame {
 
@@ -103,8 +104,11 @@ public class AdminListeEmprunts extends JFrame {
                 JLabel bookLabel = new JLabel("Livre: " + rs.getString("TITLE"));
                 JLabel leasingDateLabel = new JLabel("Date d'emprunt: " + rs.getString("LEASING_DATE"));
                 JLabel returnDateLabel = new JLabel("Date de retour: " + rs.getString("RETURN_DATE"));
-                JLabel gradeLabel = new JLabel("Note: " + rs.getString("GRADE"));
-                JLabel commentLabel = new JLabel("Commentaires: " + rs.getString("COMMENT"));
+//                JLabel returnDateLabel = new JLabel((Objects.equals(rs.getString("RETURN_DATE"), "0000-00-00")) ?
+//                        "Pas encore rendu" : "Date de retour: " + rs.getString("RETURN_DATE"));
+                JLabel gradeLabel = new JLabel((rs.getObject("GRADE") == null) ? "Aucune note" : "Note : " + rs.getString("GRADE"));
+                JLabel commentLabel = new JLabel("Commentaires: "
+                        + ((rs.getString("COMMENT") == null) ? "Aucun commentaire" : rs.getString("COMMENT")));
 
                 infoPanel.add(userLabel);
                 infoPanel.add(bookLabel);

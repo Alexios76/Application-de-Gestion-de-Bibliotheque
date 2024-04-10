@@ -1,21 +1,23 @@
+import jdk.jshell.execution.Util;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.StandardSocketOptions;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class AffichageEmprunts extends JFrame {
 
     private Connexion connexion;
-    private int userID;
 
-    public AffichageEmprunts(int userID) {
-        super("Liste des emprunts");
+    public AffichageEmprunts() {
+        super("Liste des emprunts - "+ Utilisateur.getName() + " " + Utilisateur.getSurname());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.userID = userID;
 
         connexion = new Connexion();
         connexion.nouvelleConnexion();
@@ -30,7 +32,7 @@ public class AffichageEmprunts extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageLivres(userID);
+                new AffichageLivres();
             }
         });
         menuBar.add(livresBibliothequeItem);
@@ -40,7 +42,7 @@ public class AffichageEmprunts extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageAuteurs(userID);
+                new AffichageAuteurs();
             }
         });
         menuBar.add(biographieAuteursItem);
@@ -50,7 +52,7 @@ public class AffichageEmprunts extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageEmprunts(userID);
+                new AffichageEmprunts();
             }
         });
         menuBar.add(mesEmpruntsItem);
@@ -90,14 +92,15 @@ public class AffichageEmprunts extends JFrame {
         JPanel empruntsListPanel = new JPanel(new GridLayout(0, 1));
 
         // Requête SQL pour récupérer les emprunts de l'utilisateur connecté
-        String sql = "SELECT b.TITLE, a.SURNAME, a.NAME, br.LEASING_DATE, br.RETURN_DATE " +
+        String sql = "SELECT br.ID, br.LEASING_DATE, br.RETURN_DATE, br.COMMENT, br.GRADE, br.BOOK_ID, " +
+                "a.SURNAME, a.NAME, b.TITLE " +
                 "FROM borrow br " +
                 "JOIN books b ON br.BOOK_ID = b.ID " +
                 "JOIN authors a ON b.AUTHOR_ID = a.ID " +
                 "WHERE br.USER_ID = ?";
         try {
             PreparedStatement pst = connexion.nouvelleConnexion().prepareStatement(sql);
-            pst.setInt(1, userID);
+            pst.setInt(1, Utilisateur.getId());
             ResultSet rs = pst.executeQuery();
 
             // Parcours des résultats et affichage des informations des emprunts
@@ -111,11 +114,29 @@ public class AffichageEmprunts extends JFrame {
                 JLabel authorLabel = new JLabel("Auteur: " + rs.getString("SURNAME") + " " + rs.getString("NAME"));
                 JLabel leasingDateLabel = new JLabel("Date d'emprunt: " + rs.getDate("LEASING_DATE"));
                 JLabel returnDateLabel = new JLabel("Date de retour: " + rs.getDate("RETURN_DATE"));
-
                 infoPanel.add(titleLabel2);
                 infoPanel.add(authorLabel);
                 infoPanel.add(leasingDateLabel);
                 infoPanel.add(returnDateLabel);
+
+                JButton commentButton;
+                int id = rs.getInt("ID");
+                if (Objects.equals(rs.getString("COMMENT"), "")) {
+                    commentButton = new JButton("Ajouter un commentaire");
+                } else {
+                    JLabel titleCommentLabel = new JLabel("Commentaire :");
+                    JLabel commentLabel = new JLabel(rs.getString("COMMENT"));
+                    infoPanel.add(titleCommentLabel);
+                    infoPanel.add(commentLabel);
+                    commentButton = new JButton("Modifier le commentaire");
+                }
+                commentButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new commentaireForm(id);
+                    }
+                });
+                infoPanel.add(commentButton);
 
                 empruntPanel.add(infoPanel, BorderLayout.CENTER);
 
@@ -134,8 +155,8 @@ public class AffichageEmprunts extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AffichageEmprunts(3)); // Utilisateur avec ID 3
+        Utilisateur.connexion(5, "Hubert","Chavasse","hubert@gmail.com",0,0, "test");
+        SwingUtilities.invokeLater(() -> new AffichageEmprunts());
     }
 }

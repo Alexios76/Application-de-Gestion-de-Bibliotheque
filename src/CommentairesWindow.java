@@ -5,55 +5,52 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AuteurDetailsWindow extends JFrame {
+public class CommentairesWindow extends JFrame {
 
     private Connexion connexion;
-    private int authorId;
-
-    public AuteurDetailsWindow(int authorId) {
-        super("Détails de l'auteur - "+ Utilisateur.getName() + " " + Utilisateur.getSurname());
+    public CommentairesWindow(int bookId, String bookName) {
+        super("Commentaires - "+ Utilisateur.getName() + " " + Utilisateur.getSurname());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.authorId = authorId;
 
         connexion = new Connexion();
         connexion.nouvelleConnexion();
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1));
 
-        JLabel titleLabel = new JLabel("Fiche de l'auteur");
+        JLabel titleLabel = new JLabel("Commentaires");
+        JLabel livreLabel = new JLabel(bookName);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Police en gras, taille 20
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER); // Centrer le texte
         mainPanel.add(titleLabel);
 
         // Requête SQL pour récupérer les détails de l'auteur
-        String sql = "SELECT * FROM authors WHERE ID = " + authorId;
+        String sql = "SELECT borrow.ID, borrow.USER_ID, borrow.LEASING_DATE, borrow.RETURN_DATE, borrow.GRADE, borrow.COMMENT, " +
+                "users.SURNAME, users.NAME, users.EMAIL " +
+                "FROM borrow JOIN users ON borrow.USER_ID = users.ID " +
+                "WHERE borrow.BOOK_ID = " + bookId + " AND borrow.COMMENT != ''" +
+                "ORDER BY borrow.RETURN_DATE DESC";
         try {
             ResultSet rs = connexion.query(sql);
 
-            // Affichage des informations de l'auteur
+            // Affichage des commentaires
             while (rs.next()) {
-                JPanel auteurPanel = new JPanel(new BorderLayout());
-                auteurPanel.setBorder(BorderFactory.createEtchedBorder());
+                JPanel listCommentsPanel = new JPanel(new BorderLayout());
+                listCommentsPanel.setBorder(BorderFactory.createEtchedBorder());
 
-                JPanel infoPanel = new JPanel(new GridLayout(0, 1)); // Panneau pour les informations de l'auteur
+                JPanel commentPanel = new JPanel(new GridLayout(0, 1));
 
-                JLabel surnameLabel = new JLabel("Prénom: " + rs.getString("SURNAME"));
-                JLabel nameLabel = new JLabel("Nom: " + rs.getString("NAME"));
-                JLabel styleLabel = new JLabel("Style: " + rs.getString("STYLE"));
-                JLabel biographyLabel = new JLabel("Biographie: " + rs.getString("BIOGRAPHY"));
-                JLabel birthDateLabel = new JLabel("Date de naissance: " + rs.getInt("BIRTH_DATE"));
-                JLabel deathDateLabel = new JLabel("Date de mort: " + rs.getInt("DEATH_DATE"));
+                JLabel nameLabel = new JLabel(rs.getString("SURNAME") + " "
+                        + rs.getString("NAME") + " | " + rs.getDate("RETURN_DATE"));
+                JLabel commentLabel = new JLabel(rs.getString("COMMENT"));
+                JLabel gradeLabel = new JLabel("Note : " + rs.getString("GRADE") + " sur 5");
 
-                infoPanel.add(surnameLabel);
-                infoPanel.add(nameLabel);
-                infoPanel.add(styleLabel);
-                infoPanel.add(biographyLabel);
-                infoPanel.add(birthDateLabel);
-                infoPanel.add(deathDateLabel);
+                commentPanel.add(nameLabel);
+                commentPanel.add(commentLabel);
+                commentPanel.add(gradeLabel);
 
-                auteurPanel.add(infoPanel, BorderLayout.CENTER);
+                listCommentsPanel.add(commentPanel, BorderLayout.CENTER);
 
-                mainPanel.add(auteurPanel);
+                mainPanel.add(listCommentsPanel);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -86,6 +83,6 @@ public class AuteurDetailsWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AuteurDetailsWindow(1));
+        SwingUtilities.invokeLater(() -> new CommentairesWindow(1, "L'Etranger"));
     }
 }

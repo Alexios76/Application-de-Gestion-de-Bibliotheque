@@ -59,10 +59,19 @@ public class LoginFrame extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ouvrirAffichageEmprunts(); // Utilisation de la méthode pour gérer l'authentification et l'ouverture d'AffichageEmprunts
+                String email = emailField.getText();
+                String password = String.valueOf(passwordField.getPassword());
+                if (authentifier(email, password)) {
+                    JOptionPane.showMessageDialog(LoginFrame.this, "Connexion réussie !");
+                    if (Utilisateur.getAdmin()) {
+                        new AdminGestionLivres().setVisible(true);
+                    } else {
+                        new AffichageLivres().setVisible(true); // Passage de l'ID de l'utilisateur
+                    }
+                    LoginFrame.this.dispose();
+                }
             }
         });
-
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,21 +82,6 @@ public class LoginFrame extends JFrame {
         });
     }
 
-    private void ouvrirAffichageEmprunts() {
-        if (authentifier(emailField.getText(), String.valueOf(passwordField.getPassword()))) {
-            JOptionPane.showMessageDialog(LoginFrame.this, "Connexion réussie !");
-            // Redirection en fonction du type de compte
-            if (isAdmin(emailField.getText())) {
-                new AdminGestionLivres().setVisible(true);
-            } else {
-                new AffichageLivres(userId).setVisible(true); // Passage de l'ID de l'utilisateur
-            }
-            LoginFrame.this.dispose();
-        } else {
-            JOptionPane.showMessageDialog(LoginFrame.this, "Email ou mot de passe incorrect.",
-                    "Erreur de Connexion", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private boolean authentifier(String email, String password) {
         Connexion connexion = new Connexion();
@@ -95,37 +89,25 @@ public class LoginFrame extends JFrame {
 
         if (cn != null) {
             try {
-                String sql = "SELECT ID FROM users WHERE EMAIL = ? AND PASSWORD = ?";
+                String sql = "SELECT * FROM users WHERE EMAIL = ? AND PASSWORD = ?";
                 PreparedStatement pst = cn.prepareStatement(sql);
                 pst.setString(1, email);
                 pst.setString(2, password);
                 ResultSet rs = pst.executeQuery();
 
-                if (rs.next()) {
-                    userId = rs.getInt("ID"); // Stockage de l'ID de l'utilisateur connecté
-                    return true;
+                if(rs.next()) {
+                    Utilisateur.connexion(rs.getInt("ID"),
+                            rs.getString("SURNAME"),
+                            rs.getString("NAME"),
+                            rs.getString("EMAIL"),
+                            rs.getInt("ADMIN"),
+                            rs.getFloat("DEBT"),
+                            rs.getString("PASSWORD")
+                    );
+                    Utilisateur.print();
+                    return true; // Si le résultat est non vide, les identifiants sont corrects
                 }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-        return false;
-    }
 
-    private boolean isAdmin(String email) {
-        Connexion connexion = new Connexion();
-        Connection cn = connexion.nouvelleConnexion();
-
-        if (cn != null) {
-            try {
-                String sql = "SELECT ADMIN FROM users WHERE EMAIL = ?";
-                PreparedStatement pst = cn.prepareStatement(sql);
-                pst.setString(1, email);
-                ResultSet rs = pst.executeQuery();
-
-                if (rs.next()) {
-                    return rs.getInt("ADMIN") == 1; // Si ADMIN vaut 1, l'utilisateur est un admin
-                }
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -134,6 +116,6 @@ public class LoginFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(LoginFrame::new);
+        new LoginFrame();
     }
 }

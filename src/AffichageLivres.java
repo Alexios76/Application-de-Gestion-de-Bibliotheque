@@ -18,10 +18,9 @@ public class AffichageLivres extends JFrame {
     private JPanel livresPanel;
     private int userID;
 
-    public AffichageLivres(int userID) {
-        super("Livres disponibles");
+    public AffichageLivres() {
+        super("Livres disponibles - "+ Utilisateur.getName() + " " + Utilisateur.getSurname());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.userID = userID;
 
         connexion = new Connexion();
         connexion.nouvelleConnexion();
@@ -36,7 +35,7 @@ public class AffichageLivres extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageLivres(userID);
+                new AffichageLivres();
             }
         });
         menuBar.add(livresBibliothequeItem);
@@ -46,7 +45,7 @@ public class AffichageLivres extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageAuteurs(userID);
+                new AffichageAuteurs();
             }
         });
         menuBar.add(biographieAuteursItem);
@@ -56,7 +55,7 @@ public class AffichageLivres extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AffichageEmprunts(userID);
+                new AffichageEmprunts();
             }
         });
         menuBar.add(mesEmpruntsItem);
@@ -85,11 +84,11 @@ public class AffichageLivres extends JFrame {
 
         // Reste du code pour la fenêtre principale
         JPanel titleSearchPanel = new JPanel(new BorderLayout());
+
         JLabel titleLabel = new JLabel("Livres disponibles");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleSearchPanel.add(titleLabel, BorderLayout.NORTH);
-
 
         // Panneau de recherche
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -100,8 +99,9 @@ public class AffichageLivres extends JFrame {
         searchPanel.add(searchField);
         titleSearchPanel.add(searchPanel, BorderLayout.CENTER);
 
+        // Case à cocher Disponible
         disponibleCheckBox = new JCheckBox("Disponible");
-        disponibleCheckBox.setSelected(false);
+        disponibleCheckBox.setSelected(false); // Par défaut, non cochée
         disponibleCheckBox.addItemListener(new DisponibleCheckBoxListener());
         titleSearchPanel.add(disponibleCheckBox, BorderLayout.SOUTH);
 
@@ -117,26 +117,43 @@ public class AffichageLivres extends JFrame {
 
         mainPanel.add(new JScrollPane(livresPanel), BorderLayout.CENTER);
 
+        // Ajout du panneau principal à la fenêtre
         getContentPane().add(mainPanel);
 
-        setSize(800,600);
+        // Taille de la fenêtre
+        setSize(400, 500);
 
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
+    // Méthode pour afficher les livres disponibles
+    boolean afficherNotes = false;
     private void afficherLivresDisponibles() {
-        String sql = "SELECT b.TITLE, CONCAT(a.SURNAME, ' ', a.NAME) AS AUTHOR_NAME, a.SURNAME, a.NAME, b.GENRE, b.RELEASE_DATE, b.DESCRIPTION, b.NB_PAGES, a.ID AS AUTHOR_ID, b.IMAGE " +
-                "FROM books b " +
-                "INNER JOIN authors a ON b.AUTHOR_ID = a.ID ";
+        // Ancienne requête (marche mais n'affiche pas la note qu'a reçu le livre)
+        String sql;
+        if (!afficherNotes) {
+            sql = "SELECT CONCAT(a.SURNAME, ' ', a.NAME) AS AUTHOR_NAME, a.SURNAME, a.NAME, a.ID AS AUTHOR_ID,\n" +
+                    "b.TITLE, b.GENRE, b.RELEASE_DATE, b.DESCRIPTION, b.NB_PAGES, b.IMAGE\n" +
+                    "FROM books b INNER JOIN authors a ON b.AUTHOR_ID = a.ID";
+        } else {
+            // Requête SQL pour récupérer les livres disponibles avec les informations sur les auteurs
+            sql = "SELECT CONCAT(a.SURNAME, ' ', a.NAME) AS AUTHOR_NAME, a.SURNAME, a.NAME, a.ID AS AUTHOR_ID, \n" +
+                    "b.TITLE, b.GENRE, b.RELEASE_DATE, b.DESCRIPTION, b.NB_PAGES, b.IMAGE, AVG(br.GRADE) AS AVG_GRADE\n" +
+                    "FROM books b INNER JOIN authors a ON b.AUTHOR_ID = a.ID \n" +
+                    "LEFT JOIN borrow AS br ON b.ID = br.BOOK_ID\n" +
+                    "GROUP BY br.BOOK_ID";
+        }
 
         if (disponibleCheckBox.isSelected()) {
-            sql += "WHERE b.AVAILABILITY = 1";
+            // Afficher uniquement les livres disponibles
+            sql += " WHERE b.AVAILABILITY = 1";
         }
 
         try {
             ResultSet rs = connexion.query(sql);
 
+            // Affichage des informations des livres
             while (rs.next()) {
                 JPanel livrePanel = createLivrePanel(rs);
                 livrePanels.add(livrePanel);
@@ -162,7 +179,9 @@ public class AffichageLivres extends JFrame {
         String authorFullName = authorLastName + " " + authorFirstName;
         String imagePath = rs.getString("IMAGE");
 
-        if (imagePath != null && !imagePath.isEmpty()) {
+        boolean afficherImages = true;
+
+        if (imagePath != null && !imagePath.isEmpty() && afficherImages) {
             try (InputStream inputStream = getClass().getResourceAsStream("/images/" + imagePath)) {
                 if (inputStream != null) {
                     BufferedImage originalImage = ImageIO.read(inputStream);
@@ -213,6 +232,12 @@ public class AffichageLivres extends JFrame {
         infoPanel.add(genreLabel, gbc);
 
         gbc.gridy++;
+        if (afficherNotes) {
+            JLabel noteLabel = new JLabel("Note: " +
+                    ((rs.getString("AVG_GRADE") == null) ? "Aucune note" : rs.getFloat("AVG_GRADE")));
+            infoPanel.add(noteLabel, gbc);
+        }
+        gbc.gridy++;
         JLabel releaseDateLabel = new JLabel("Date de sortie: " + rs.getInt("RELEASE_DATE"));
         infoPanel.add(releaseDateLabel, gbc);
 
@@ -224,13 +249,22 @@ public class AffichageLivres extends JFrame {
         JLabel nbPagesLabel = new JLabel("Nombre de pages: " + rs.getInt("NB_PAGES"));
         infoPanel.add(nbPagesLabel, gbc);
 
+        // Bouton Détails de l'auteur et commentaires
+
         JButton detailsButton = new JButton("Détails de l'auteur");
+        JButton commentairesButton = new JButton("Commentaires");
+
         detailsButton.setPreferredSize(new Dimension(140, 25));
+        commentairesButton.setPreferredSize(new Dimension(140, 25));
+
         detailsButton.addActionListener(new DetailsButtonListener(rs.getInt("AUTHOR_ID")));
+        commentairesButton.addActionListener(new CommentairesButtonListener(rs.getInt("AUTHOR_ID"), rs.getString("TITLE")));
 
         JPanel detailsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         detailsPanel.add(detailsButton);
+        detailsPanel.add(commentairesButton);
 
+        // Ajoute le infoPanel en haut et detailsPanel en bas du livrePanel
         livrePanel.add(infoPanel, BorderLayout.NORTH);
         livrePanel.add(detailsPanel, BorderLayout.SOUTH);
 
@@ -246,6 +280,19 @@ public class AffichageLivres extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             new AuteurDetailsWindow(authorId);
+        }
+    }
+
+    class CommentairesButtonListener implements ActionListener{
+        private int bookId;
+        private String bookName;
+        public CommentairesButtonListener(int bookId, String bookName){
+            this.bookId = bookId;
+            this.bookName = bookName;
+        }
+        public void actionPerformed(ActionEvent e){
+        // Ouvre la fenêtre des commentaires du livre
+            new CommentairesWindow(bookId,bookName);
         }
     }
 
@@ -320,6 +367,7 @@ public class AffichageLivres extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AffichageLivres(3)); // Utilisateur avec ID 3
+        Utilisateur.connexion(5, "Hubert","Chavasse","hubert@gmail.com",0,0, "test");
+        SwingUtilities.invokeLater(() -> new AffichageEmprunts());
     }
 }
